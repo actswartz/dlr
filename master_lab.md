@@ -1,6 +1,6 @@
 
 
-````markdown
+
 # Multi-Vendor Ansible Lab Book  
 _Cisco IOS • Arista EOS • Juniper vMX_
 
