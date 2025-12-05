@@ -28,10 +28,10 @@ Cisco and Arista configure OSPF by specifying which networks to advertise. Junip
     # --- existing interface vars ---
     ospf:
       process_id: 1
-      router_id: 10.222.201.1
+      router_id: 10.1.1.1
       networks:
-        - "network 10.222.11.0 0.0.0.255 area 0"
-        - "network 10.222.201.1 0.0.0.0 area 0"
+        - "network 10.1.12.0 0.0.0.255 area 0"
+        - "network 10.1.1.1 0.0.0.0 area 0"
     ```
 
 2.  Open `host_vars/r2.yml` and **add** the `ospf` section.
@@ -41,11 +41,11 @@ Cisco and Arista configure OSPF by specifying which networks to advertise. Junip
     # --- existing interface vars ---
     ospf:
       process_id: 1
-      router_id: 10.222.201.2
+      router_id: 10.1.2.2
       networks:
-        - "network 10.222.11.0 0.0.0.255 area 0"
-        - "network 10.222.12.0 0.0.0.255 area 0"
-        - "network 10.222.201.2 0.0.0.0 area 0"
+        - "network 10.1.12.0 0.0.0.255 area 0"
+        - "network 10.1.23.0 0.0.0.255 area 0"
+        - "network 10.1.2.2 0.0.0.0 area 0"
     ```
 
 3.  Open `host_vars/r3.yml` and **add** the `ospf` section. Notice how the structure is different.
@@ -133,9 +133,9 @@ Now we will build a playbook that reads this new `ospf` data. It will use condit
 3.  Finally, check the routing table on R1 to see if it has learned the route to R3's loopback address via OSPF.
 
     ```bash
-    ansible r1 -i inventory -a "show ip route 10.222.201.3"
+    ansible r1 -i inventory -a "show ip route 10.1.3.3"
     ```
-    You should see a route learned via OSPF, with a next-hop pointing to R2's IP address.
+    You should see a route learned via OSPF, with a next-hop pointing to R2's IP address (`10.1.12.2`).
 
 ## Conclusion
 

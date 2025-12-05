@@ -1,6 +1,4 @@
-
-
-
+````markdown
 # Multi-Vendor Ansible Lab Book  
 _Cisco IOS • Arista EOS • Juniper vMX_
 
@@ -22,30 +20,79 @@ R1 (Cisco IOS)  ───  R2 (Arista EOS)  ───  R3 (Juniper vMX)
 
 There is **no direct link** between R1 and R3.
 
-### 0.1 Management Access
+---
 
-For all pods and all devices:
+### 0.1 IP Addressing Overview
 
-* **SSH is already configured**
-* **Username:** `admin`
-* **Password:** `800-ePlus`
+There are **two kinds of IP addresses** in this lab:
 
-You will be given a **pod number N** (1–15) and a **Pod Addressing Guide** with:
+1. **Management addresses** – unique per pod
+2. **Data-plane addresses** (transit & loopbacks) – the same in every pod
 
-* Management IPs for R1, R2, R3 in your pod
-* Transit link IPs for:
+#### 0.1.1 Management Addresses (Unique Per Pod)
 
-  * R1–R2 (Ethernet0/0 ↔ Ethernet1)
-  * R2–R3 (Ethernet2 ↔ ge-0/2/2)
-* Loopback addresses for each router
+Management IPs live in a shared subnet (for example `10.222.1.0/24`) but are **unique per pod**.
 
-You will use that guide throughout all labs.
+For **pod N (1–15)**:
+
+* **R1 mgmt:** `10.222.1.(10 + N)`
+* **R2 mgmt:** `10.222.1.(30 + N)`
+* **R3 mgmt:** `10.222.1.(50 + N)`
+
+Examples:
+
+* Pod 1:
+
+  * R1: `10.222.1.11`
+  * R2: `10.222.1.31`
+  * R3: `10.222.1.51`
+* Pod 7:
+
+  * R1: `10.222.1.17`
+  * R2: `10.222.1.37`
+  * R3: `10.222.1.57`
+
+Your instructor will give you a **Pod Management Addressing Guide** with these values.
+
+**Management access credentials (all pods, all devices):**
+
+* Username: `admin`
+* Password: `800-ePlus`
+
+SSH is already enabled on all routers.
 
 ---
 
-## 0.2 Ansible Student Workspace
+#### 0.1.2 Data-Plane & Loopback Addresses (Same in Every Pod)
 
-All of your Ansible work will live in a **students** subfolder.
+Inside each pod, the **routing and data-plane addressing is identical**:
+
+* **R1 loopback0:** `10.1.1.1/32`
+* **R2 loopback0:** `10.1.2.2/32`
+* **R3 loopback0:** `10.1.3.3/32`
+
+Transit links:
+
+* **R1 ↔ R2** on R1 `Eth0/0` and R2 `Eth1`:
+
+  * Subnet: `10.1.12.0/24`
+  * R1 `Ethernet0/0`: `10.1.12.1/24`
+  * R2 `Ethernet1`:  `10.1.12.2/24`
+
+* **R2 ↔ R3** on R2 `Eth2` and R3 `ge-0/0/2`:
+
+  * Subnet: `10.1.23.0/24`
+  * R2 `Ethernet2`:   `10.1.23.2/24`
+  * R3 `ge-0/0/2`:    `10.1.23.3/24`
+
+These **same 10.1.x.x addresses** are used in every pod.
+Pods are isolated from each other, so using overlapping 10.1.x.x ranges is safe.
+
+---
+
+### 0.2 Ansible Student Workspace
+
+All of your Ansible work will live in a **`students`** subfolder.
 
 From your home or lab directory:
 
@@ -59,6 +106,7 @@ Create the standard layout:
 
 ```bash
 mkdir -p group_vars host_vars templates roles profiles backups rendered
+touch inventory.yml
 ```
 
 Your tree should look like:
@@ -66,7 +114,7 @@ Your tree should look like:
 ```text
 ~/ansible-labs/
 └── students/
-    ├── inventory.yml          # you will create this
+    ├── inventory.yml
     ├── group_vars/
     ├── host_vars/
     ├── templates/
@@ -93,7 +141,7 @@ In this lab, you will:
 
 ### Tasks
 
-1. **Find Your Pod in the Addressing Guide**
+1. **Find Your Pod in the Management Guide**
 
    * Note your **pod number N**.
    * Look up the management IPs for R1, R2, and R3 for pod N.
@@ -112,17 +160,17 @@ In this lab, you will:
 
 3. **Explore Each Platform**
 
-   On **R1 (Cisco IOS)**, run:
+   On **R1 (Cisco IOS)**:
 
    * `show version`
    * `show ip interface brief`
 
-   On **R2 (Arista EOS)**, run:
+   On **R2 (Arista EOS)**:
 
    * `show version`
    * `show ip interface brief`
 
-   On **R3 (Juniper vMX)**, run:
+   On **R3 (Juniper vMX)**:
 
    * `show version`
    * `show interfaces terse`
@@ -137,9 +185,9 @@ In this lab, you will:
 
    Label:
 
-   * Device name (R1/R2/R3)
+   * Device names (R1, R2, R3)
    * Platform (Cisco / Arista / Juniper)
-   * Management IP address for each
+   * Management IP address for each (from the guide)
 
 5. **Log Out**
 
@@ -153,74 +201,87 @@ In this lab, you will:
 
 You will configure:
 
-* Data-plane interfaces (R1–R2 and R2–R3 links)
+* Data-plane interfaces on R1–R2 and R2–R3
 * Loopback interfaces on all three routers
 
-using the IP scheme in the Pod Addressing Guide.
+All pods use the **same 10.1.x.x addresses** for these links.
+
+### Reference Addresses (Same in Every Pod)
+
+* R1 `Ethernet0/0`: `10.1.12.1/24`
+
+* R2 `Ethernet1`:   `10.1.12.2/24`
+
+* R2 `Ethernet2`:   `10.1.23.2/24`
+
+* R3 `ge-0/0/2`:    `10.1.23.3/24`
+
+* R1 Lo0: `10.1.1.1/32`
+
+* R2 Lo0: `10.1.2.2/32`
+
+* R3 Lo0: `10.1.3.3/32`
 
 ### Tasks
 
-1. **Review Your Pod’s IPs**
-
-   From the Pod Addressing Guide for your pod N, identify:
-
-   * R1–R2 subnet and IPs
-   * R2–R3 subnet and IPs
-   * Loopback IPs for R1, R2, R3
-
-2. **Configure R1 (Cisco IOS)**
+1. **Configure R1 (Cisco IOS)**
 
    On R1:
 
    ```text
    configure terminal
    interface Ethernet0/0
-     ip address <R1_R1R2_IP> 255.255.255.0
+     ip address 10.1.12.1 255.255.255.0
      no shutdown
    !
    interface Loopback0
-     ip address <R1_loopback_IP> 255.255.255.255
+     ip address 10.1.1.1 255.255.255.255
    end
    show ip interface brief
    ```
 
-3. **Configure R2 (Arista EOS)**
+2. **Configure R2 (Arista EOS)**
 
    On R2:
 
    ```text
    configure
    interface Ethernet1
-     ip address <R2_R1R2_IP>/24
+     ip address 10.1.12.2/24
      no shutdown
    !
    interface Ethernet2
-     ip address <R2_R2R3_IP>/24
+     ip address 10.1.23.2/24
      no shutdown
    !
    interface Loopback0
-     ip address <R2_loopback_IP>/32
+     ip address 10.1.2.2/32
    end
    show ip interface brief
    ```
 
-4. **Configure R3 (Juniper vMX)**
+3. **Configure R3 (Juniper vMX)**
 
    On R3:
 
    ```text
    configure
-   set interfaces ge-0/2/2 unit 0 family inet address <R3_R2R3_IP>/24
-   set interfaces lo0 unit 0 family inet address <R3_loopback_IP>/32
+   set interfaces ge-0/0/2 unit 0 family inet address 10.1.23.3/24
+   set interfaces lo0 unit 0 family inet address 10.1.3.3/32
    commit
    show interfaces terse
    ```
 
-5. **Verify Connectivity on Transit Links**
+4. **Verify Connectivity on Transit Links**
 
-   * From R1: ping R2’s R1–R2 IP.
-   * From R2: ping R1’s R1–R2 IP and R3’s R2–R3 IP.
-   * From R3: ping R2’s R2–R3 IP.
+   * From **R1**: ping `10.1.12.2`
+   * From **R2**:
+
+     * ping `10.1.12.1`
+     * ping `10.1.23.3`
+   * From **R3**: ping `10.1.23.2`
+
+Record your results.
 
 ---
 
@@ -580,7 +641,7 @@ Use Ansible to collect **device information** and save it as “profiles”.
 3. **Review Profiles**
 
    * Look in `profiles/`.
-   * Compare version outputs across Cisco, Arista, Juniper.
+   * Compare version outputs across Cisco, Arista, and Juniper.
 
 ---
 
@@ -589,6 +650,8 @@ Use Ansible to collect **device information** and save it as “profiles”.
 ### Overview
 
 Use Ansible to ensure descriptions are set on your transit interfaces.
+
+(Interfaces are the same in every pod; only the **hostnames** differ.)
 
 ### Tasks
 
@@ -616,7 +679,7 @@ Use Ansible to ensure descriptions are set on your transit interfaces.
 
    ```yaml
    interfaces:
-     - name: ge-0/2/2
+     - name: ge-0/0/2
        description: "R3-PODN to R2-PODN"
    ```
 
@@ -677,26 +740,31 @@ Use Ansible to ensure descriptions are set on your transit interfaces.
 
 You will configure static routes so that R1 and R3 can reach each other’s loopbacks via R2, all managed by Ansible.
 
+We will use the **same addresses in every pod**:
+
+* R1 loopback: `10.1.1.1/32`
+* R3 loopback: `10.1.3.3/32`
+* R1 next-hop towards R3: `10.1.12.2` (R2)
+* R3 next-hop towards R1: `10.1.23.2` (R2)
+
 ### Tasks
 
 1. **Define Static Routes in Host Vars**
-
-   Example (adjust IPs from Pod Addressing Guide):
 
    `host_vars/r1-podN.yml` (append):
 
    ```yaml
    static_routes:
-     - prefix: "<R3_loopback_IP>/32"
-       next_hop: "<R2_R1R2_IP>"
+     - prefix: "10.1.3.3/32"
+       next_hop: "10.1.12.2"
    ```
 
    `host_vars/r3-podN.yml`:
 
    ```yaml
    static_routes:
-     - prefix: "<R1_loopback_IP>/32"
-       next_hop: "<R2_R2R3_IP>"
+     - prefix: "10.1.1.1/32"
+       next_hop: "10.1.23.2"
    ```
 
 2. **Static Route Playbook**
@@ -732,8 +800,8 @@ You will configure static routes so that R1 and R3 can reach each other’s loop
    ansible-playbook -i inventory.yml static_routes.yml
    ```
 
-   * From R1, ping R3’s loopback.
-   * From R3, ping R1’s loopback.
+   * From **R1**, ping `10.1.3.3`
+   * From **R3**, ping `10.1.1.1`
 
 ---
 
@@ -744,6 +812,11 @@ You will configure static routes so that R1 and R3 can reach each other’s loop
 Replace static routes with a routing protocol, using templates per vendor.
 
 (Your instructor will specify **OSPF** or **BGP**.)
+
+The same data-plane addresses are used in every pod:
+
+* Lo0s: `10.1.1.1`, `10.1.2.2`, `10.1.3.3`
+* Links: `10.1.12.0/24`, `10.1.23.0/24`
 
 ### High-Level Tasks
 
@@ -763,22 +836,29 @@ Replace static routes with a routing protocol, using templates per vendor.
 
 ---
 
-# Lab 10 – Pod-Aware Jinja2: Deriving IPs from pod_id
+# Lab 10 – Pod-Aware Jinja2: Deriving Hostnames & Mgmt IPs from pod_id
 
 ### Overview
 
-Instead of hard-coding IPs, you will use a `pod_id` variable and the formulas from your addressing scheme to generate IPs in templates.
+Data-plane addresses are identical in every pod, but **management addresses and hostnames depend on the pod number**.
+
+You’ll use a `pod_id` variable and simple formulas to generate:
+
+* Hostnames (`R1-PODN`, etc.)
+* Management IP addresses in `10.222.1.0/24`
 
 ### High-Level Tasks
 
 1. Add `pod_id: N` to each host’s vars.
-2. Build templates that compute:
+2. Create a Jinja2 template that:
 
-   * Hostname
-   * Loopback addresses
-   * Interface addresses (R1–R2, R2–R3)
-3. Create `build_pod.yml` to push the generated configs.
-4. Compare the result to your earlier manual configuration.
+   * Builds the correct hostname from `pod_id`
+   * Calculates mgmt IPs like `10.222.1.(10 + pod_id)` for R1, etc.
+3. Create a playbook (e.g., `mgmt_build.yml`) to:
+
+   * Render the resulting config snippet for each router.
+   * Push it using the vendor config modules.
+4. Compare the result to your existing mgmt/hostname configuration.
 
 ---
 
@@ -862,7 +942,7 @@ Make your playbooks safer by validating state and handling errors cleanly.
 
 1. Add `assert` tasks that:
 
-   * Check ping success between loopbacks.
+   * Check ping success between loopbacks (`10.1.1.1`, `10.1.2.2`, `10.1.3.3`).
    * Check that specific routes are present.
 2. Use `failed_when` and `ignore_errors` in controlled scenarios.
 3. Purposefully break a variable or template and observe how Ansible reports the failure.
@@ -877,7 +957,7 @@ Design and implement a small automation solution that builds, configures, and va
 
 ### Example Goal
 
-> “From minimal configs, configure mgmt, loopbacks, transit interfaces, routing (static or dynamic), apply baseline (NTP/hostname), and back up final configs – all via Ansible.”
+> “From minimal configs, configure management, loopbacks, transit interfaces, routing (static or dynamic), apply baseline (NTP/hostname), and back up final configs – all via Ansible.”
 
 ### Suggested Requirements
 

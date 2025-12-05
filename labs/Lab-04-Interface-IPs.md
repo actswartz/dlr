@@ -13,11 +13,25 @@ In this lab, you will learn to use **`host_vars`**, Ansible's standard method fo
 
 ## Pre-Lab Reading: Your IP Address Schema
 
-For this lab, we will use the IP address plan found in the `ipaddress.md` file. We will assume every student is in **Pod 1**. Take a moment to review the IP addresses for Pod 1's devices.
+In every pod, the data-plane addressing is identical:
 
-*   **R1 (Cisco):** Loopback `10.222.201.1/32`, Link to R2 is `10.222.11.1/24`
-*   **R2 (Arista):** Loopback `10.222.201.2/32`, Link to R1 is `10.222.11.2/24`, Link to R3 is `10.222.12.2/24`
-*   **R3 (Juniper):** Loopback `10.222.201.3/32`, Link to R2 is `10.222.12.3/24`
+* R1 Lo0: `10.1.1.1/32`
+
+* R2 Lo0: `10.1.2.2/32`
+
+* R3 Lo0: `10.1.3.3/32`
+
+* R1 E0/0 – R2 Eth1: `10.1.12.0/24`
+
+  * R1: `10.1.12.1/24`
+  * R2: `10.1.12.2/24`
+
+* R2 Eth2 – R3 ge-0/0/2: `10.1.23.0/24`
+
+  * R2: `10.1.23.2/24`
+  * R3: `10.1.23.3/24`
+
+Only the **management IP addresses** (used by Ansible to connect to the devices) differ between pods; the data-plane and loopback addresses you configure in this lab are the same in every pod.
 
 ---
 
@@ -39,11 +53,11 @@ The `host_vars` directory is a special folder that Ansible automatically checks.
     ```yaml
     ---
     loopback_interface: Loopback0
-    loopback_ip: 10.222.201.1/32
+    loopback_ip: 10.1.1.1/32
 
     interfaces:
       - name: Ethernet0/0
-        ip: 10.222.11.1/24
+        ip: 10.1.12.1/24
         description: Link to R2
     ```
 
@@ -53,14 +67,14 @@ The `host_vars` directory is a special folder that Ansible automatically checks.
     ```yaml
     ---
     loopback_interface: Loopback0
-    loopback_ip: 10.222.201.2/32
+    loopback_ip: 10.1.2.2/32
 
     interfaces:
       - name: Ethernet1
-        ip: 10.222.11.2/24
+        ip: 10.1.12.2/24
         description: Link to R1
       - name: Ethernet2
-        ip: 10.222.12.2/24
+        ip: 10.1.23.2/24
         description: Link to R3
     ```
 
@@ -70,11 +84,11 @@ The `host_vars` directory is a special folder that Ansible automatically checks.
     ```yaml
     ---
     loopback_interface: lo0
-    loopback_ip: 10.222.201.3/32
+    loopback_ip: 10.1.3.3/32
 
     interfaces:
-      - name: ge-0/0/2  # Note: The table shows ge-0/2/2, but dev environments often use ge-0/0/x
-        ip: 10.222.12.3/24
+      - name: ge-0/0/2
+        ip: 10.1.23.3/24
         description: Link to R2
     ```
 

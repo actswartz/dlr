@@ -77,7 +77,7 @@ This playbook will use no configuration modules. It is purely for reading and ch
       when: inventory_hostname == 'r1'
       ansible.builtin.assert:
         that:
-          - "'via 10.222.11.2' in r_r1_route.stdout[0]" # Next hop should be R2
+          - "'via 10.1.12.2' in r_r1_route.stdout[0]" # Next hop should be R2
         fail_msg: "Route from R1 to R3 loopback is incorrect!"
         success_msg: "Route from R1 to R3 loopback is correct."
 
