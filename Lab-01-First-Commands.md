@@ -20,6 +20,27 @@ For this lab, your three devices have already been pre-configured with:
 *   A unique management IP address.
 *   SSH access enabled.
 *   A user account with the username **`admin`** and password **`800-ePlus`**.
+---
+Management IP Address
+|       | Cisco       | Arista      | Juniper      |
+|-------|-------------|-------------|--------------|
+|       | R1 - E1/1   | R2 - E5     | R3 - ge0/0/4 |
+| Pod1  | 10.222.1.11 | 10.222.1.31 | 10.222.1.51  |
+| Pod2  | 10.222.1.12 | 10.222.1.32 | 10.222.1.52  |
+| Pod3  | 10.222.1.13 | 10.222.1.33 | 10.222.1.53  |
+| Pod4  | 10.222.1.14 | 10.222.1.34 | 10.222.1.54  |
+| Pod5  | 10.222.1.15 | 10.222.1.35 | 10.222.1.55  |
+| Pod6  | 10.222.1.16 | 10.222.1.36 | 10.222.1.56  |
+| Pod7  | 10.222.1.17 | 10.222.1.37 | 10.222.1.57  |
+| Pod8  | 10.222.1.18 | 10.222.1.38 | 10.222.1.58  |
+| Pod9  | 10.222.1.19 | 10.222.1.39 | 10.222.1.59  |
+| Pod10 | 10.222.1.20 | 10.222.1.40 | 10.222.1.60  |
+| Pod11 | 10.222.1.21 | 10.222.1.41 | 10.222.1.61  |
+| Pod12 | 10.222.1.22 | 10.222.1.42 | 10.222.1.62  |
+| Pod13 | 10.222.1.23 | 10.222.1.43 | 10.222.1.63  |
+| Pod14 | 10.222.1.24 | 10.222.1.44 | 10.222.1.64  |
+| Pod15 | 10.222.1.25 | 10.222.1.45 | 10.222.1.65  |
+
 
 ---
 
@@ -39,13 +60,13 @@ ansible_password=800-ePlus
 ansible_connection=network_cli
 
 [cisco]
-r1 ansible_host=x.x.x.x
+r1 ansible_host=10.222.1.1X
 
 [arista]
-r2 ansible_host=x.x.x.x
+r2 ansible_host=10.222.1.3X
 
 [juniper]
-r3 ansible_host=x.x.x.x
+r3 ansible_host=10.222.1.5X
 
 [routers:children]
 cisco
