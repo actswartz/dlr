@@ -1,15 +1,17 @@
-# Classroom Lab Connection Instructions
 
-Welcome to the lab environment 👋  
+⸻
+
+Classroom Lab Connection Instructions
+
+Welcome to the lab environment 👋
 Follow the steps below to connect to your pod and start working.
 
----
+⸻
 
-## 1. Connect to the jump server
+1. Connect to the jump server
 
 From your terminal or SSH client, run:
 
-```bash
 ssh jump@PROVIDED_BY_INSTRUCTOR
 
 Password:
@@ -160,4 +162,3 @@ Tips & Troubleshooting
 	•	Password (800-ePlus)
 
 If you still can’t connect, take a screenshot or copy the error message and let your instructor know.
-
