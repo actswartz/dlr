@@ -113,6 +113,7 @@ ansible routers -i inventory -m ping
 ```
 
 2.  You should see a **GREEN** success message for each of your three devices.
+ ignore the warning messages that may appear in purple 
 
 ```
 r1 | SUCCESS => {
