@@ -1,6 +1,3 @@
-Gotcha—that’s just a display thing in the chat. I’ll give you the raw Markdown in a code block so you can copy it cleanly.
-
-⚠️ Important: When you paste into your .md file on GitHub, do not include the very first line markdown or the last line .
 
 # Classroom Lab Connection Instructions
 
