@@ -1,17 +1,19 @@
+Gotcha—that’s just a display thing in the chat. I’ll give you the raw Markdown in a code block so you can copy it cleanly.
 
-⸻
+⚠️ Important: When you paste into your .md file on GitHub, do not include the very first line markdown or the last line .
 
-Classroom Lab Connection Instructions
+# Classroom Lab Connection Instructions
 
-Welcome to the lab environment 👋
+Welcome to the lab environment 👋  
 Follow the steps below to connect to your pod and start working.
 
-⸻
+---
 
-1. Connect to the jump server
+## 1. Connect to the jump server
 
 From your terminal or SSH client, run:
 
+```bash
 ssh jump@PROVIDED_BY_INSTRUCTOR
 
 Password:
@@ -43,7 +45,7 @@ Password for all pods:
 
 All lab files and instructions are available here:
 
-🔗 Labs Repository: https://github.com/actswartz/dlr
+Labs Repository: https://github.com/actswartz/dlr
 
 ⸻
 
@@ -162,3 +164,4 @@ Tips & Troubleshooting
 	•	Password (800-ePlus)
 
 If you still can’t connect, take a screenshot or copy the error message and let your instructor know.
+
