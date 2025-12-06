@@ -50,12 +50,13 @@ The first step in any Ansible project is to tell Ansible what devices it should 
 
 ### Task: Create the `inventory` file
 
-1.  In your directory, create a new file named `inventory`.
-2.  Copy and paste the following text into your `inventory` file. **You must replace the placeholder IPs (`x.x.x.x`)** with the actual Management IPs for your specific pod devices. You can find these in the table above.
-3.  "nano" editor is an easy to use editor
-4.  To Start nano from the CLI: nano inventory
-5.  Paste in teh below and the edit it to be correct for your pod
-6.  To Exit Type CTRL+X then hit Y and press ENTER to save
+1.  create a directory called 'gem'.  use "mkdir gem" and then change into that directory
+2.  In your gem directory, create a new file named `inventory`.
+3.  Copy and paste the following text into your `inventory` file. **You must replace the placeholder IPs (`x.x.x.x`)** with the actual Management IPs for your specific pod devices. You can find these in the table above.
+4.  "nano" editor is an easy to use editor
+5.  To Start nano from the CLI: nano inventory
+6.  Paste in teh below and the edit it to be correct for your pod
+7.  To Exit Type CTRL+X then hit Y and press ENTER to save
 
 ```ini
 [all:vars]
