@@ -55,7 +55,7 @@ The first step in any Ansible project is to tell Ansible what devices it should 
 3.  "nano" editor is an easy to use editor
 4.  To Start nano from the CLI: nano inventory
 5.  Paste in teh below and the edit it to be correct for your pod
-6.  To Exit Type CTRL+X then hit Y to save
+6.  To Exit Type CTRL+X then hit Y and press ENTER to save
 
 ```ini
 [all:vars]
