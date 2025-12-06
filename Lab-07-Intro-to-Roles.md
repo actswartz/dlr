@@ -43,7 +43,12 @@ Our goal is to move the logic from `configure_hostnames.yml` and `configure_syst
 
 ### Task: Move Variables into the Role
 
-1.  Open `roles/base_config/defaults/main.yml`.
+1.  Open `roles/base_config/defaults/main.yml`. Launch or reopen it with nano:
+
+    ```bash
+    nano roles/base_config/defaults/main.yml
+    ```
+
 2.  Copy the variables from `configure_system.yml` into this file.
 
     **File: `roles/base_config/defaults/main.yml`**
@@ -58,7 +63,12 @@ Our goal is to move the logic from `configure_hostnames.yml` and `configure_syst
 
 ### Task: Move Tasks into the Role
 
-1.  Open `roles/base_config/tasks/main.yml`. This file will contain all the tasks needed to apply our base configuration.
+1.  Open `roles/base_config/tasks/main.yml`. This file will contain all the tasks needed to apply our base configuration. Launch or reopen it with nano:
+
+    ```bash
+    nano roles/base_config/tasks/main.yml
+    ```
+
 2.  Copy the tasks from **both** `configure_hostnames.yml` and `configure_system.yml` into this single file.
 
     **File: `roles/base_config/tasks/main.yml`**
@@ -120,7 +130,13 @@ Now that the complex logic is hidden away in the role, our playbook becomes incr
 This playbook will serve as our main, top-level playbook.
 
 1.  In your `gem` directory, create a new file named `site.yml`.
-2.  Add the following content.
+2.  Launch or reopen the file with nano:
+
+    ```bash
+    nano site.yml
+    ```
+
+3.  Add the following content.
 
     ```yaml
     ---

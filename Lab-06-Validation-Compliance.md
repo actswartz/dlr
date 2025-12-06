@@ -25,7 +25,13 @@ This playbook will use no configuration modules. It is purely for reading and ch
 ### Task: Create the `validate_network.yml` Playbook
 
 1.  In your `gem` directory, create a new file named `validate_network.yml`.
-2.  Copy and paste the following YAML into the file.
+2.  Launch or reopen the file with nano:
+
+    ```bash
+    nano validate_network.yml
+    ```
+
+3.  Copy and paste the following YAML into the file.
 
 ```yaml
 ---

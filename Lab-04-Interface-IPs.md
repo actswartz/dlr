@@ -47,7 +47,11 @@ The `host_vars` directory is a special folder that Ansible automatically checks.
     mkdir host_vars
     ```
 
-2.  Inside the `host_vars` directory, create a file named `r1.yml` (for your Cisco router) and add the following content.
+2.  Inside the `host_vars` directory, create a file named `r1.yml` (for your Cisco router) and add the following content. Launch or reopen it with nano:
+
+    ```bash
+    nano host_vars/r1.yml
+    ```
 
     **File: `host_vars/r1.yml`**
     ```yaml
@@ -61,7 +65,11 @@ The `host_vars` directory is a special folder that Ansible automatically checks.
         description: Link to R2
     ```
 
-3.  Next, create the file `r2.yml` (for your Arista router) with its variables.
+3.  Next, create the file `r2.yml` (for your Arista router) with its variables. Launch or reopen it with nano:
+
+    ```bash
+    nano host_vars/r2.yml
+    ```
 
     **File: `host_vars/r2.yml`**
     ```yaml
@@ -78,7 +86,11 @@ The `host_vars` directory is a special folder that Ansible automatically checks.
         description: Link to R3
     ```
 
-4.  Finally, create the file `r3.yml` (for your Juniper router).
+4.  Finally, create the file `r3.yml` (for your Juniper router). Launch or reopen it with nano:
+
+    ```bash
+    nano host_vars/r3.yml
+    ```
 
     **File: `host_vars/r3.yml`**
     ```yaml
@@ -106,7 +118,13 @@ Now we will build a playbook that reads the data from our `host_vars` files and 
 ### Task: Create the `configure_interfaces.yml` playbook
 
 1.  In your `gem` directory, create a new file named `configure_interfaces.yml`.
-2.  Copy and paste the following YAML into the file.
+2.  Launch or reopen the file with nano:
+
+    ```bash
+    nano configure_interfaces.yml
+    ```
+
+3.  Copy and paste the following YAML into the file.
 
 ```yaml
 ---

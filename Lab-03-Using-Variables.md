@@ -23,7 +23,13 @@ Let's use this to set the hostname for each of our devices.
 ### Task: Create the `configure_hostnames.yml` Playbook
 
 1.  In your `gem` directory, create a new file named `configure_hostnames.yml`.
-2.  Copy and paste the following YAML into the file.
+2.  Launch or reopen the file with nano:
+
+    ```bash
+    nano configure_hostnames.yml
+    ```
+
+3.  Copy and paste the following YAML into the file.
 
 ```yaml
 ---
@@ -74,7 +80,13 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
 ### Task: Create the `configure_system.yml` Playbook
 
 1.  In your `gem` directory, create a new file named `configure_system.yml`.
-2.  Copy and paste the following YAML into the file.
+2.  Launch or reopen the file with nano:
+
+    ```bash
+    nano configure_system.yml
+    ```
+
+3.  Copy and paste the following YAML into the file.
 
 ```yaml
 ---

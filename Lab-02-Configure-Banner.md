@@ -28,7 +28,13 @@ Our goal is to set a consistent MOTD banner on all three of our devices. Each de
 ### Task: Create the `configure_banner.yml` Playbook
 
 1.  In your `gem` directory, create a new file named `configure_banner.yml`.
-2.  Copy and paste the following YAML text into this file. Notice that we have three separate **plays** in this one file, one for each device type.
+2.  Launch or reopen the file with nano:
+
+    ```bash
+    nano configure_banner.yml
+    ```
+
+3.  Copy and paste the following YAML text into this file. Notice that we have three separate **plays** in this one file, one for each device type.
 
 ```yaml
 ---

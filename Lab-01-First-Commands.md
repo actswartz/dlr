@@ -19,7 +19,7 @@ You will work from a central machine called the **control node** (your lab envir
 For this lab, your three devices have already been pre-configured with:
 *   A unique management IP address.
 *   SSH access enabled.
-*   A user account with the username **`admin`** and password **`800-ePlus`**.
+*   Authentication required with the username **`admin`** and password **`800-ePlus`** for all routers.
 ---
 Management IP Address
 |       | Cisco       | Arista      | Juniper      |
@@ -52,11 +52,15 @@ The first step in any Ansible project is to tell Ansible what devices it should 
 
 1.  create a directory called 'gem'.  use "mkdir gem" and then change into that directory
 2.  In your gem directory, create a new file named `inventory`.
-3.  Copy and paste the following text into your `inventory` file. **You must replace the placeholder IPs (`x.x.x.x`)** with the actual Management IPs for your specific pod devices. You can find these in the table above.
-4.  "nano" editor is an easy to use editor
-5.  To Start nano from the CLI: nano inventory
-6.  Paste in teh below and the edit it to be correct for your pod
-7.  To Exit Type CTRL+X then hit Y and press ENTER to save
+3.  Use nano to create or re-edit the file at any time:
+
+```bash
+nano inventory
+```
+
+4.  Copy and paste the following text into your `inventory` file. **You must replace the placeholder IPs (`x.x.x.x`)** with the actual Management IPs for your specific pod devices. You can find these in the table above.
+5.  Edit the IP address placeholders so they match your pod.
+6.  To Exit Type CTRL+X then hit Y and press ENTER to save
 
 ```ini
 [all:vars]
@@ -85,7 +89,9 @@ ansible_network_os=cisco.ios.ios
 ansible_network_os=arista.eos.eos
 
 [juniper:vars]
-ansible_network_os=junipernetworks.junos.junos
+ansible_network_os=junipernetworks.junos
+ansible_connection=ansible.netcommon.netconf
+ansible_port=830
 ```
 
 ### Explanation of the Inventory File
@@ -95,7 +101,47 @@ ansible_network_os=junipernetworks.junos.junos
 *   **`[all:vars]`**: This section defines variables that apply to **all** hosts in the inventory. We've set the `ansible_user`, `ansible_password`, and defined the connection type as `network_cli`, which is essential for network devices.
 *   **`[cisco:vars]`**: This section defines variables that only apply to the `cisco` group.
 *   `ansible_network_os`: This is a critical variable. It tells Ansible what kind of device it's talking to, so it can use the correct commands.
+*   **`[juniper:vars]`**: Along with `ansible_network_os`, we override the connection settings for Junos devices to use NETCONF (`ansible_connection=ansible.netcommon.netconf`) on TCP port 830, which is required by Juniper fact-gathering modules.
 *   **`[routers:children]`**: This creates a new group called `routers` that contains other groups. It's a convenient way to target all of your network devices at once.
+
+### Ensure NETCONF over SSH is enabled on R3
+
+The Juniper `junipernetworks.junos.*` modules communicate over NETCONF, so R3 must have NETCONF enabled.
+
+1.  From the same control node where you run Ansible, SSH to R3 manually (replace `<r3-ip>` with your management IP).
+
+    ```bash
+    ssh admin@<r3-ip>
+    ```
+
+2.  Enter configuration mode and enable NETCONF over SSH.
+
+    ```bash
+    configure
+    set system services netconf ssh
+    commit
+    ```
+
+3.  Verify the service is enabled.
+
+    ```bash
+    show configuration system services
+    ```
+
+    You should see:
+
+    ```text
+    system {
+        services {
+            ssh;
+            netconf {
+                ssh;
+            }
+        }
+    }
+    ```
+
+If `netconf ssh;` is missing, NETCONF modules such as `junipernetworks.junos.junos_facts` will time out.
 
 ---
 
@@ -160,7 +206,13 @@ Our goal is to gather information (facts) from our devices and display the OS ve
 ### Task: Create and Run the `gather_facts.yml` Playbook
 
 1.  In your `gem` directory, create a new file named `gather_facts.yml`.
-2.  Copy and paste the following YAML text into this new file.
+2.  Launch or reopen the file with nano:
+
+```bash
+nano gather_facts.yml
+```
+
+3.  Copy and paste the following YAML text into this new file.
 
 ```yaml
 ---

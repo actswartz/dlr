@@ -26,12 +26,34 @@ Just as you did for the `base_config` in Lab 7, you will now create roles for yo
 
 2.  **Populate the `interfaces` role:**
     *   Open your `configure_interfaces.yml` playbook from Lab 4.
+
+        ```bash
+        nano configure_interfaces.yml
+        ```
+
     *   Copy all the tasks from that playbook into the `roles/interfaces/tasks/main.yml` file.
+        Launch that file with nano as well:
+
+        ```bash
+        nano roles/interfaces/tasks/main.yml
+        ```
+
     *   *No variable changes are needed!* Your interface data is already perfectly structured in the `host_vars` directory, where the new role will automatically find it.
 
 3.  **Populate the `ospf` role:**
     *   Open your `configure_ospf.yml` playbook from Lab 5.
+
+        ```bash
+        nano configure_ospf.yml
+        ```
+
     *   Copy all the tasks from that playbook into the `roles/ospf/tasks/main.yml` file.
+        Launch that file with nano:
+
+        ```bash
+        nano roles/ospf/tasks/main.yml
+        ```
+
     *   Again, no variable changes are needed, as the OSPF data is also in `host_vars`.
 
 Your project structure should now look like this, with all logic neatly organized into roles:
@@ -58,7 +80,12 @@ Now you will update your `site.yml` to be the single playbook responsible for pr
 
 ### Task: Update `site.yml`
 
-1.  Open the `site.yml` playbook you created in Lab 7.
+1.  Open the `site.yml` playbook you created in Lab 7. Launch or reopen it with nano:
+
+    ```bash
+    nano site.yml
+    ```
+
 2.  Add the `interfaces` and `ospf` roles to the list. **Order is critical here!** You must configure interfaces *before* you can enable a routing protocol on them.
 
     **File: `site.yml`**
@@ -86,7 +113,13 @@ The final step is to create a master playbook that first provisions the network 
 ### Task: Create `provision_and_validate.yml`
 
 1.  In your `gem` directory, create a new file named `provision_and_validate.yml`.
-2.  Add the following content.
+2.  Launch or reopen the file with nano:
+
+    ```bash
+    nano provision_and_validate.yml
+    ```
+
+3.  Add the following content.
 
     ```yaml
     ---

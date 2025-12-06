@@ -21,7 +21,11 @@ Cisco and Arista configure OSPF by specifying which networks to advertise. Junip
 
 ### Task: Add OSPF variables to your `host_vars` files
 
-1.  Open `host_vars/r1.yml` and **add** the `ospf` section to it.
+1.  Open `host_vars/r1.yml` and **add** the `ospf` section to it. Launch or reopen it with nano:
+
+    ```bash
+    nano host_vars/r1.yml
+    ```
 
     **File: `host_vars/r1.yml`**
     ```yaml
@@ -34,7 +38,11 @@ Cisco and Arista configure OSPF by specifying which networks to advertise. Junip
         - "network 10.1.1.1 0.0.0.0 area 0"
     ```
 
-2.  Open `host_vars/r2.yml` and **add** the `ospf` section.
+2.  Open `host_vars/r2.yml` and **add** the `ospf` section. Launch or reopen it with nano:
+
+    ```bash
+    nano host_vars/r2.yml
+    ```
 
     **File: `host_vars/r2.yml`**
     ```yaml
@@ -48,7 +56,11 @@ Cisco and Arista configure OSPF by specifying which networks to advertise. Junip
         - "network 10.1.2.2 0.0.0.0 area 0"
     ```
 
-3.  Open `host_vars/r3.yml` and **add** the `ospf` section. Notice how the structure is different.
+3.  Open `host_vars/r3.yml` and **add** the `ospf` section. Notice how the structure is different. Launch or reopen it with nano:
+
+    ```bash
+    nano host_vars/r3.yml
+    ```
 
     **File: `host_vars/r3.yml`**
     ```yaml
@@ -74,7 +86,13 @@ Now we will build a playbook that reads this new `ospf` data. It will use condit
 ### Task: Create the `configure_ospf.yml` playbook
 
 1.  In your `gem` directory, create a new file named `configure_ospf.yml`.
-2.  Copy and paste the following YAML into the file.
+2.  Launch or reopen the file with nano:
+
+    ```bash
+    nano configure_ospf.yml
+    ```
+
+3.  Copy and paste the following YAML into the file.
 
 ```yaml
 ---
