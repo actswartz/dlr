@@ -80,24 +80,27 @@ Our goal is to move the logic from `configure_hostnames.yml` and `configure_syst
     - name: Set Hostname | Cisco IOS
       when: ansible_network_os == 'cisco.ios.ios'
       cisco.ios.ios_hostname:
-        hostname: "{{ inventory_hostname }}"
+        config:
+          hostname: "{{ inventory_hostname }}"
 
     - name: Set Hostname | Arista EOS
       when: ansible_network_os == 'arista.eos.eos'
       arista.eos.eos_hostname:
-        hostname: "{{ inventory_hostname }}"
+        config:
+          hostname: "{{ inventory_hostname }}"
 
     - name: Set Hostname | Juniper Junos
       when: ansible_network_os == 'junipernetworks.junos.junos'
       junipernetworks.junos.junos_hostname:
-        name: "{{ inventory_hostname }}"
+        config:
+          hostname: "{{ inventory_hostname }}"
 
     # Tasks from configure_system.yml
     - name: Set System Settings | Cisco IOS
       when: ansible_network_os == 'cisco.ios.ios'
       cisco.ios.ios_config:
         lines:
-          - ip domain-name {{ domain_name }}
+          - ip domain name {{ domain_name }}
           - ip name-server {{ dns_server }}
           - ntp server {{ ntp_server }}
 
