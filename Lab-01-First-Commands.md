@@ -245,6 +245,7 @@ nano gather_facts.yml
 *   `{{ inventory_hostname }}` and `{{ ansible_facts.net_version }}`: These are **variables**. The double curly braces `{{ }}` tell Ansible to replace the placeholder with the value of the variable.
     *   `inventory_hostname` is the name of the device the task is currently running on (e.g., `r1`).
     *   `ansible_facts.net_version` is one of the many facts that was collected by the `gather_facts` module.
+    *   **Juniper prerequisite:** the `junipernetworks.junos.junos_facts` module requires the `xmltodict` Python library on your control node. If you see errors about `xmltodict` missing, install it in your Ansible virtual environment with `pip install xmltodict` and rerun the playbook.
 
 ### Run the Playbook
 

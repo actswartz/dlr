@@ -72,6 +72,7 @@ Let's use this to set the hostname for each of our devices.
     ```bash
     ansible-playbook -i inventory configure_hostnames.yml
     ```
+    *If you see an error about `xmltodict` when the Juniper task runs, install it inside your Ansible virtual environment (`pip install xmltodict`) so NETCONF modules can parse the Junos XML responses.*
 
 2.  After it completes, SSH into one of your devices. You should see the command prompt now reflects the new hostname (e.g., `r1#`).
 
@@ -143,6 +144,7 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
     ```bash
     ansible-playbook -i inventory configure_system.yml
     ```
+    *As with the hostname playbook, ensure the `xmltodict` Python package is installed so Juniper NETCONF tasks can run successfully.*
 2.  You can verify these settings by running `show run | include ntp` (on Cisco/Arista) or `show configuration system ntp` (on Juniper) using an ad-hoc command or by SSHing in.
 
     ```bash
