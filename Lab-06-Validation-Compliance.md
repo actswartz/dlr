@@ -92,7 +92,7 @@ This playbook will use no configuration modules. It is purely for reading and ch
       when: inventory_hostname == 'r1'
       ansible.builtin.assert:
         that:
-          - "'via ' ~ (hostvars['r2'].interfaces[0].ip | ansible.utils.ipaddr('address')) in r_r1_route.stdout[0]"
+          - "(hostvars['r2'].interfaces[0].ip | ansible.utils.ipaddr('address')) in r_r1_route.stdout[0]"
         fail_msg: "Route from R1 to R3 loopback is incorrect!"
         success_msg: "Route from R1 to R3 loopback is correct."
 
@@ -129,7 +129,7 @@ This playbook will use no configuration modules. It is purely for reading and ch
 
 *   **`register: r_ospf_neighbors`**: The `register` keyword saves the entire output of a task (stdout, stderr, etc.) into a new variable named `r_ospf_neighbors`.
 *   **`when: r_ospf_neighbors.stdout is defined`**: This is a safety check. The `assert` task will only run if the variable from the `register` keyword was actually created.
-*   **`ansible.builtin.assert`**: This module checks the conditions you list in the `that:` block. If any condition is false, the entire playbook fails for that host. This is exactly what we want for a validation test! The expressions inside `that:` are already Jinja, so do **not** wrap them in `{{ }}`. Use concatenation like `'via ' ~ ...` as shown in the route validation task.
+*   **`ansible.builtin.assert`**: This module checks the conditions you list in the `that:` block. If any condition is false, the entire playbook fails for that host. This is exactly what we want for a validation test! The expressions inside `that:` are already Jinja, so do **not** wrap them in `{{ }}`. Use concatenation like `' ' ~ ...` when you need to build strings, as shown in the route validation task.
 *   **Connection handling**: Leave `connection` unset in the play so that each host uses the value from `inventory`. Cisco/Arista will use `network_cli` while Juniper keeps `netconf`, which is required for the Junos modules.
 *   `fail_msg` / `success_msg`: These make the output of the playbook very easy to read, telling you exactly what passed or failed.
 *   **Filters (`| ipaddr('address')`, `| default('')`)**:
