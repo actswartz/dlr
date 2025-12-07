@@ -203,6 +203,9 @@ Now we will build a playbook that reads the data from our `host_vars` files and 
 2.  Verify the configurations using ad-hoc commands.
 
     ```bash
+    # Check Cisco interfaces
+    ansible cisco -i inventory -a "show ip interface brief"
+
     # Check Arista interfaces
     ansible arista -i inventory -a "show ip interface brief"
 
