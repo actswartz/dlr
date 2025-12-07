@@ -204,13 +204,13 @@ Now we will build a playbook that reads the data from our `host_vars` files and 
 
     ```bash
     # Check Cisco interfaces
-    ansible cisco -i inventory -a "show ip interface brief"
+    ansible cisco -i inventory -m cisco.ios.ios_command -a "commands='show ip interface brief'"
 
     # Check Arista interfaces
-    ansible arista -i inventory -a "show ip interface brief"
+    ansible arista -i inventory -m arista.eos.eos_command -a "commands='show ip interface brief'"
 
     # Check Juniper interfaces
-    ansible juniper -i inventory -a "show interfaces terse"
+    ansible juniper -i inventory -m junipernetworks.junos.junos_command -a "commands='show interfaces terse'"
     ```
 
 ## Conclusion

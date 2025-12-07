@@ -101,18 +101,29 @@ Now we will build a playbook that reads this new `ospf` data. It will use condit
   gather_facts: false
 
   tasks:
-    - name: Configure OSPF on Cisco and Arista Devices
-      when: "'cisco' in group_names or 'arista' in group_names"
-      ansible.netcommon.net_config:
+    - name: Configure OSPF process on Cisco IOS
+      when: "'cisco' in group_names"
+      cisco.ios.ios_config:
         parents: "router ospf {{ ospf.process_id }}"
         lines:
           - "router-id {{ ospf.router_id }}"
-        before:
-          - "router ospf {{ ospf.process_id }}" # Ensure process is created
-        
-    - name: Announce networks on Cisco and Arista
-      when: "'cisco' in group_names or 'arista' in group_names"
-      ansible.netcommon.net_config:
+
+    - name: Advertise Cisco networks
+      when: "'cisco' in group_names"
+      cisco.ios.ios_config:
+        parents: "router ospf {{ ospf.process_id }}"
+        lines: "{{ ospf.networks }}"
+
+    - name: Configure OSPF process on Arista EOS
+      when: "'arista' in group_names"
+      arista.eos.eos_config:
+        parents: "router ospf {{ ospf.process_id }}"
+        lines:
+          - "router-id {{ ospf.router_id }}"
+
+    - name: Advertise Arista networks
+      when: "'arista' in group_names"
+      arista.eos.eos_config:
         parents: "router ospf {{ ospf.process_id }}"
         lines: "{{ ospf.networks }}"
 
@@ -128,13 +139,13 @@ Now we will build a playbook that reads this new `ospf` data. It will use condit
 
 ### Explanation of the Playbook
 
-*   `ansible.netcommon.net_config`: We are using a generic configuration module here. The vendor-specific `ansible_network_os` variable tells it how to translate these commands for either Cisco or Arista.
+*   **Vendor-specific config modules**: We use `cisco.ios.ios_config` and `arista.eos.eos_config` so we can push the exact `router ospf ...` commands those platforms expect. This is more reliable than the generic `net_config` module on classroom simulators.
 *   **Two Tasks for Cisco/Arista**: We use one task to set the `router-id` and a second task to configure the networks. This helps ensure the router-id is set before any networks are announced.
 *   `loop_control: { label: "{{ item }}" }`: This is an optional but helpful keyword. It changes the playbook's output so that instead of just seeing "item: ge-0/0/2.0", you'll see the interface name itself, making the log easier to read.
 
 ### Run and Verify
 
-1.  Execute the playbook.
+1.  From your `gem` directory (where `inventory` lives), execute the playbook. If you are elsewhere, include the full inventory path with `-i /path/to/gem/inventory`.
 
     ```bash
     ansible-playbook -i inventory configure_ospf.yml
@@ -144,14 +155,14 @@ Now we will build a playbook that reads this new `ospf` data. It will use condit
 
     ```bash
     # Check neighbors on R2 (Arista), which should see both R1 and R3
-    ansible r2 -i inventory -a "show ip ospf neighbor"
+    ansible r2 -i inventory -m arista.eos.eos_command -a "commands='show ip ospf neighbor'"
     ```
     You should see output indicating that R2 has formed a `FULL` adjacency with its neighbors.
 
 3.  Finally, check the routing table on R1 to see if it has learned the route to R3's loopback address via OSPF.
 
     ```bash
-    ansible r1 -i inventory -a "show ip route 10.1.3.3"
+    ansible r1 -i inventory -m cisco.ios.ios_command -a "commands='show ip route 10.1.3.3'"
     ```
     You should see a route learned via OSPF, with a next-hop pointing to R2's IP address (`10.1.12.2`).
 
