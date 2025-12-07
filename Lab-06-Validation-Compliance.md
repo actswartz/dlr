@@ -91,11 +91,9 @@ This playbook will use no configuration modules. It is purely for reading and ch
 
     - name: 2. VALIDATE ROUTE on R1
       when: inventory_hostname == 'r1'
-      vars:
-        expected_nexthop: "{{ hostvars['r2'].interfaces[0].ip | ansible.utils.ipaddr('address') }}"
       ansible.builtin.assert:
         that:
-          - "'via ' ~ expected_nexthop in r_r1_route.stdout[0]"
+          - ("via " ~ (hostvars['r2'].interfaces[0].ip | ansible.utils.ipaddr('address'))) in r_r1_route.stdout[0]
         fail_msg: "Route from R1 to R3 loopback is incorrect!"
         success_msg: "Route from R1 to R3 loopback is correct."
 
