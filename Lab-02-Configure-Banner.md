@@ -2,6 +2,8 @@
 
 In Lab 1, you learned how to view information from your devices. Now it's time to make your first change! This lab will guide you through writing a playbook that configures a "Message of the Day" (MOTD) banner on your routers.
 
+![Lab Topology](images/topo.jpg)
+
 ## Objectives 🎯
 
 *   Understand the concept of **Idempotency** in Ansible.

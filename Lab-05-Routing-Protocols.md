@@ -4,6 +4,8 @@ With interfaces configured, your routers can talk to devices on the same link, b
 
 The goal is to enable R1, R2, and R3 to all be able to `ping` each other's loopback addresses.
 
+![Lab Topology](images/topo.jpg)
+
 ## Objectives 🎯
 
 *   Update `host_vars` files with structured data for a routing protocol.

@@ -4,6 +4,8 @@ So far, we have worked with variables defined directly inside the playbook. For 
 
 In this lab, you will learn to use **`host_vars`**, Ansible's standard method for managing device-specific variables. You will use `host_vars` to define the IP addresses for your router interfaces and then write a playbook to apply that configuration.
 
+![Lab Topology](images/topo.jpg)
+
 ## Objectives 🎯
 
 *   Understand how to use `host_vars` to manage device-specific variables.

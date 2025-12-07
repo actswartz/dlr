@@ -4,6 +4,8 @@ As you create more automation, you'll find you are rewriting the same logic in m
 
 Think of roles as functions in a programming language. You write the logic once inside the role, and then you can call that role from any playbook with a single line. In this lab, you will refactor the hostname, NTP, and DNS configurations from Lab 3 into a reusable `base_config` role.
 
+![Lab Topology](images/topo.jpg)
+
 ## Objectives 🎯
 
 *   Understand the purpose and structure of an Ansible Role.

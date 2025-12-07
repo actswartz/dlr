@@ -2,6 +2,8 @@
 
 Congratulations on reaching the final lab! This capstone project is where you will combine all the skills you've developed—variables, modules, conditionals, and roles—into a single, master workflow that can provision an entire pod from a baseline state and then validate its own work.
 
+![Lab Topology](images/topo.jpg)
+
 ## Objectives 🎯
 
 *   Encapsulate all of your automation logic into a set of clean, reusable roles.

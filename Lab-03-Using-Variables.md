@@ -4,6 +4,8 @@ In the last lab, we hard-coded the banner message directly into our playbook. Th
 
 This lab will teach you how to use variables to make your playbooks more flexible, scalable, and easier to read.
 
+![Lab Topology](images/topo.jpg)
+
 ## Objectives 🎯
 
 *   Understand how to use built-in Ansible variables like `inventory_hostname`.

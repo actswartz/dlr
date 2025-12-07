@@ -4,6 +4,8 @@ So far, you have been using Ansible to *push* configuration to devices. This is 
 
 Instead of changing configuration, this playbook will run `show` commands, check the output for specific values, and either pass or fail based on what it finds.
 
+![Lab Topology](images/topo.jpg)
+
 ## Objectives 🎯
 
 *   Learn to use vendor-specific `_command` modules to run operational commands.
