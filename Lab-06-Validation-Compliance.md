@@ -49,20 +49,28 @@ This playbook will use no configuration modules. It is purely for reading and ch
       cisco.ios.ios_command:
         commands:
           - show ip ospf neighbor
-      register: r_ospf_neighbors
+      register: r_cisco_ospf_neighbors
+
+    - name: 1. VALIDATE OSPF NEIGHBORS (Cisco IOS)
+      when: "'cisco' in group_names"
+      ansible.builtin.assert:
+        that:
+          - "'FULL' in r_cisco_ospf_neighbors.stdout[0]"
+        fail_msg: "An OSPF neighbor is not FULL on {{ inventory_hostname }}!"
+        success_msg: "OSPF neighbors are FULL on {{ inventory_hostname }}."
 
     - name: 1. CHECK OSPF NEIGHBORS (Arista EOS)
       when: "'arista' in group_names"
       arista.eos.eos_command:
         commands:
           - show ip ospf neighbor
-      register: r_ospf_neighbors
+      register: r_arista_ospf_neighbors
 
-    - name: 1. VALIDATE OSPF NEIGHBORS (Cisco/Arista)
-      when: r_ospf_neighbors.stdout is defined
+    - name: 1. VALIDATE OSPF NEIGHBORS (Arista EOS)
+      when: "'arista' in group_names"
       ansible.builtin.assert:
         that:
-          - "'FULL' in r_ospf_neighbors.stdout[0]"
+          - "'FULL' in r_arista_ospf_neighbors.stdout[0]"
         fail_msg: "An OSPF neighbor is not FULL on {{ inventory_hostname }}!"
         success_msg: "OSPF neighbors are FULL on {{ inventory_hostname }}."
 
@@ -97,38 +105,55 @@ This playbook will use no configuration modules. It is purely for reading and ch
         success_msg: "Route from R1 to R3 loopback is correct."
 
     - name: 3. CHECK NTP COMPLIANCE (Cisco)
+      when: "'cisco' in group_names"
       cisco.ios.ios_command:
         commands:
           - show running-config | include ntp
+      register: r_cisco_ntp_config
+
+    - name: 3. VALIDATE NTP COMPLIANCE (Cisco)
       when: "'cisco' in group_names"
-      register: r_ntp_config
+      ansible.builtin.assert:
+        that:
+          - "ntp_server in (r_cisco_ntp_config.stdout[0] | default(''))"
+        fail_msg: "NTP server {{ ntp_server }} is not configured on {{ inventory_hostname }}!"
+        success_msg: "NTP server is correctly configured on {{ inventory_hostname }}."
 
     - name: 3. CHECK NTP COMPLIANCE (Arista)
+      when: "'arista' in group_names"
       arista.eos.eos_command:
         commands:
           - show running-config | include ntp
+      register: r_arista_ntp_config
+
+    - name: 3. VALIDATE NTP COMPLIANCE (Arista)
       when: "'arista' in group_names"
-      register: r_ntp_config
+      ansible.builtin.assert:
+        that:
+          - "ntp_server in (r_arista_ntp_config.stdout[0] | default(''))"
+        fail_msg: "NTP server {{ ntp_server }} is not configured on {{ inventory_hostname }}!"
+        success_msg: "NTP server is correctly configured on {{ inventory_hostname }}."
 
     - name: 3. CHECK NTP COMPLIANCE (Juniper)
+      when: ansible_network_os == 'junipernetworks.junos.junos'
       junipernetworks.junos.junos_command:
         commands:
           - show configuration system ntp
-      when: ansible_network_os == 'junipernetworks.junos.junos'
       register: r_ntp_config_junos
 
-    - name: 3. VALIDATE NTP COMPLIANCE
+    - name: 3. VALIDATE NTP COMPLIANCE (Juniper)
+      when: ansible_network_os == 'junipernetworks.junos.junos'
       ansible.builtin.assert:
         that:
-          - "ntp_server in (r_ntp_config.stdout[0] | default('')) or ntp_server in (r_ntp_config_junos.stdout[0] | default(''))"
+          - "ntp_server in (r_ntp_config_junos.stdout[0] | default(''))"
         fail_msg: "NTP server {{ ntp_server }} is not configured on {{ inventory_hostname }}!"
         success_msg: "NTP server is correctly configured on {{ inventory_hostname }}."
 ```
 
 ### Explanation of the Playbook
 
-*   **`register: r_ospf_neighbors`**: The `register` keyword saves the entire output of a task (stdout, stderr, etc.) into a new variable named `r_ospf_neighbors`.
-*   **`when: r_ospf_neighbors.stdout is defined`**: This is a safety check. The `assert` task will only run if the variable from the `register` keyword was actually created.
+*   **`register:` variables**: Each vendor-specific command saves its output into a register (e.g., `r_cisco_ospf_neighbors`, `r_arista_ntp_config`). This keeps the results separate so later tasks on the same host can safely reference the data without being overwritten by tasks for other platforms.
+*   **`when:` statements**: Every command/assert pair is guarded with a `when` so it only runs on the appropriate devices. This avoids unnecessary connections and ensures the register variables exist before we reference them.
 *   **`ansible.builtin.assert`**: This module checks the conditions you list in the `that:` block. If any condition is false, the entire playbook fails for that host. This is exactly what we want for a validation test! The expressions inside `that:` are already Jinja, so do **not** wrap them in `{{ }}`. Use concatenation like `' ' ~ ...` when you need to build strings, as shown in the route validation task.
 *   **Connection handling**: Leave `connection` unset in the play so that each host uses the value from `inventory`. Cisco/Arista will use `network_cli` while Juniper keeps `netconf`, which is required for the Junos modules.
 *   **NTP prerequisite**: These compliance checks assume each router was previously configured with the Lab 3 NTP server (`130.126.24.24`). If you haven't run your `base_config`/Lab 3 playbooks recently, reapply them (or manually configure `ntp server 130.126.24.24`) before running this validation playbook.
