@@ -32,11 +32,13 @@ Just as you did for the `base_config` in Lab 7, you will now create roles for yo
         ```
 
     *   Copy all the tasks from that playbook into the `roles/interfaces/tasks/main.yml` file.
-        Launch that file with nano as well:
+        Launch that file with nano as well (or copy the file with `cp` and then remove the play-level keys so only the tasks remain):
 
         ```bash
         nano roles/interfaces/tasks/main.yml
         ```
+
+        *Nano copy tip:* In nano you can select an entire file by moving the cursor to the start, pressing `Ctrl+^` to set the mark, using the arrow keys to highlight the rest of the file, then pressing `Alt+6` (or `Esc` then `6`) to copy the selection. Paste with `Ctrl+U` where needed.
 
     *   *No variable changes are needed!* Your interface data is already perfectly structured in the `host_vars` directory, where the new role will automatically find it.
 
@@ -48,7 +50,7 @@ Just as you did for the `base_config` in Lab 7, you will now create roles for yo
         ```
 
     *   Copy all the tasks from that playbook into the `roles/ospf/tasks/main.yml` file.
-        Launch that file with nano:
+        Launch that file with nano (same nano copy workflow as above if you prefer not to use `cp`):
 
         ```bash
         nano roles/ospf/tasks/main.yml
