@@ -39,19 +39,19 @@ Let's use this to set the hostname for each of our devices.
 
   tasks:
     - name: Configure hostname on Cisco IOS
-      when: ansible_network_os == 'cisco.ios.ios'
+      when: "'cisco' in group_names"
       cisco.ios.ios_hostname:
         config:
           hostname: "{{ inventory_hostname }}"
 
     - name: Configure hostname on Arista EOS
-      when: ansible_network_os == 'arista.eos.eos'
+      when: "'arista' in group_names"
       arista.eos.eos_hostname:
         config:
           hostname: "{{ inventory_hostname }}"
 
     - name: Configure hostname on Juniper Junos
-      when: "'junipernetworks.junos' in ansible_network_os"
+      when: "'juniper' in group_names"
       junipernetworks.junos.junos_hostname:
         config:
           hostname: "{{ inventory_hostname }}"
@@ -60,7 +60,7 @@ Let's use this to set the hostname for each of our devices.
 ### Explanation of the Playbook
 
 *   **`hosts: routers`**: This time, we are running a single play against all our routers.
-*   **`when: ansible_network_os == 'cisco.ios.ios'`**: This is a **conditional statement**. This task will *only* run on devices where the `ansible_network_os` variable matches `'cisco.ios.ios'`. This allows us to have vendor-specific tasks all within the same play. It's a more efficient way of handling different device types than creating multiple plays.
+*   **`when: "'cisco' in group_names"`**: This is a **conditional statement**. This task will *only* run on devices that belong to the `cisco` group. Group-based checks are resilient even if you change the `ansible_network_os` string in your inventory.
 *   **`ios_hostname`, `eos_hostname`, `junos_hostname`**: These are more specific modules designed just for managing hostnames. They expect a `config` dictionary containing the desired hostname, which we populate with `inventory_hostname`.
 *   **`hostname: "{{ inventory_hostname }}"`**: Here we are using the `inventory_hostname` variable. For the device `r1`, this will resolve to the string "r1". For `r2`, it will be "r2", and so on.
 *   **Junos NETCONF reminder**: Ensure your inventory (from Lab 1) sets `ansible_connection=ansible.netcommon.netconf`, `ansible_network_os=junipernetworks.junos`, and `ansible_port=830` for Juniper devices so `junos_hostname` can communicate successfully (the condition simply checks that the string `'junipernetworks.junos'` is present, so either `junipernetworks.junos` or `junipernetworks.junos.junos` will pass).
@@ -105,7 +105,7 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
 
   tasks:
     - name: Configure NTP, DNS, and Domain Name on Cisco IOS
-      when: ansible_network_os == 'cisco.ios.ios'
+      when: "'cisco' in group_names"
       cisco.ios.ios_config:
         lines:
           - ip domain-name {{ domain_name }}
@@ -113,7 +113,7 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
           - ntp server {{ ntp_server }}
 
     - name: Configure NTP, DNS, and Domain Name on Arista EOS
-      when: ansible_network_os == 'arista.eos.eos'
+      when: "'arista' in group_names"
       arista.eos.eos_config:
         lines:
           - ip domain-name {{ domain_name }}
@@ -121,7 +121,7 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
           - ntp server {{ ntp_server }}
 
     - name: Configure NTP, DNS, and Domain Name on Juniper Junos
-      when: "'junipernetworks.junos' in ansible_network_os"
+      when: "'juniper' in group_names"
       junipernetworks.junos.junos_config:
         lines:
           - set system domain-name {{ domain_name }}
@@ -133,7 +133,7 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
 
 *   **`vars:`**: This block at the top of the play is where we define our custom variables. We've created `ntp_server`, `dns_server`, and `domain_name`.
 *   **`{{ ntp_server }}`**: In our tasks, we reference our variables using the same `{{ }}` syntax. Ansible will substitute the value from the `vars:` block before running the task.
-*   **Generic `*_config` modules**: We've returned to the generic config modules here, as they allow us to apply multiple lines of configuration in a single task, which is very efficient.
+*   **Generic `*_config` modules**: We've returned to the generic config modules here, as they allow us to apply multiple lines of configuration in a single task, which is very efficient. We still leverage group-based conditionals (`'cisco' in group_names`, etc.) so the proper vendor block runs regardless of the exact inventory strings you use.
 *   **Junos commands**: Because Junos modules expect actual `set ...` statements, we provide the complete commands in each list entry. The NETCONF settings discussed in Lab 1 still apply here, and the `when: "'junipernetworks.junos' in ansible_network_os"` check allows either of the common Junos strings.
 
 ### Run the System Playbook
