@@ -83,6 +83,61 @@ Cisco and Arista configure OSPF by specifying which networks to advertise. Junip
 
 Now we will build a playbook that reads this new `ospf` data. It will use conditional tasks (`when:`) to apply the correct configuration style for each vendor.
 
+### Task: Create the Jinja2 templates
+
+Using templates keeps the commands tidy and lets you reuse the same logic across multiple routers.
+
+1.  Inside your `gem` directory, create a `templates` folder if it does not already exist.
+
+    ```bash
+    mkdir -p templates
+    ```
+
+2.  Create the Cisco IOS template.
+
+    ```bash
+    nano templates/ospf_ios.j2
+    ```
+
+    **File: `templates/ospf_ios.j2`**
+    ```jinja
+    router ospf {{ ospf.process_id }}
+     router-id {{ ospf.router_id }}
+    {% for network in ospf.networks %}
+     {{ network }}
+    {% endfor %}
+    ```
+
+3.  Create the Arista EOS template.
+
+    ```bash
+    nano templates/ospf_eos.j2
+    ```
+
+    **File: `templates/ospf_eos.j2`**
+    ```jinja
+    router ospf {{ ospf.process_id }}
+     router-id {{ ospf.router_id }}
+    {% for network in ospf.networks %}
+     {{ network }}
+    {% endfor %}
+    ```
+
+4.  Create the Juniper template.
+
+    ```bash
+    nano templates/ospf_junos.j2
+    ```
+
+    **File: `templates/ospf_junos.j2`**
+    ```jinja
+    {% for iface in ospf.interfaces %}
+    set protocols ospf area {{ ospf.area }} interface {{ iface }}
+    {% endfor %}
+    ```
+
+These templates pull data from the `ospf` dictionary in each device's `host_vars` file, keeping the playbook itself clean.
+
 ### Task: Create the `configure_ospf.yml` playbook
 
 1.  In your `gem` directory, create a new file named `configure_ospf.yml`.
@@ -101,47 +156,26 @@ Now we will build a playbook that reads this new `ospf` data. It will use condit
   gather_facts: false
 
   tasks:
-    - name: Configure OSPF process on Cisco IOS
+    - name: Configure OSPF on Cisco IOS
       when: "'cisco' in group_names"
       cisco.ios.ios_config:
-        parents: "router ospf {{ ospf.process_id }}"
-        lines:
-          - "router-id {{ ospf.router_id }}"
+        src: templates/ospf_ios.j2
 
-    - name: Advertise Cisco networks
-      when: "'cisco' in group_names"
-      cisco.ios.ios_config:
-        parents: "router ospf {{ ospf.process_id }}"
-        lines: "{{ ospf.networks }}"
-
-    - name: Configure OSPF process on Arista EOS
+    - name: Configure OSPF on Arista EOS
       when: "'arista' in group_names"
       arista.eos.eos_config:
-        parents: "router ospf {{ ospf.process_id }}"
-        lines:
-          - "router-id {{ ospf.router_id }}"
-
-    - name: Advertise Arista networks
-      when: "'arista' in group_names"
-      arista.eos.eos_config:
-        parents: "router ospf {{ ospf.process_id }}"
-        lines: "{{ ospf.networks }}"
+        src: templates/ospf_eos.j2
 
     - name: Configure OSPF on Juniper Devices
       when: ansible_network_os == 'junipernetworks.junos.junos'
       junipernetworks.junos.junos_config:
-        lines:
-          - "set protocols ospf area {{ ospf.area }} interface {{ item }}"
-      loop: "{{ ospf.interfaces }}"
-      loop_control:
-        label: "{{ item }}" # Makes playbook output cleaner
+        src: templates/ospf_junos.j2
 ```
 
 ### Explanation of the Playbook
 
-*   **Vendor-specific config modules**: We use `cisco.ios.ios_config` and `arista.eos.eos_config` so we can push the exact `router ospf ...` commands those platforms expect. This is more reliable than the generic `net_config` module on classroom simulators.
-*   **Two Tasks for Cisco/Arista**: We use one task to set the `router-id` and a second task to configure the networks. This helps ensure the router-id is set before any networks are announced.
-*   `loop_control: { label: "{{ item }}" }`: This is an optional but helpful keyword. It changes the playbook's output so that instead of just seeing "item: ge-0/0/2.0", you'll see the interface name itself, making the log easier to read.
+*   **Jinja2 templates (`src:`)**: Each vendor task points to a template that renders the full set of commands using the data from `host_vars`. This keeps the playbook short and easy to read while still generating vendor-correct syntax.
+*   **Vendor-specific config modules**: We still rely on `cisco.ios.ios_config`, `arista.eos.eos_config`, and `junos_config` so the rendered text is applied using the right transport (network_cli for Cisco/Arista and NETCONF for Junos).
 
 ### Run and Verify
 
