@@ -28,7 +28,7 @@ r3 ansible_host=10.222.1.57
 [juniper:vars]
 ansible_user=lab
 ansible_password=800-ePlus
-ansible_network_os=junipernetworks.junos
+ansible_network_os=junipernetworks.junos.junos
 ansible_connection=ansible.netcommon.netconf
 ansible_port=830
 
