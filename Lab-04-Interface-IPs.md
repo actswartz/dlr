@@ -133,58 +133,62 @@ Now we will build a playbook that reads the data from our `host_vars` files and 
   gather_facts: false
 
   tasks:
-    - name: Configure Cisco Interfaces
+    - name: Configure Cisco Loopback Interface
       when: "'cisco' in group_names"
-      cisco.ios.ios_interfaces:
-        config:
-          - name: "{{ loopback_interface }}"
-            description: "System Loopback"
-            enabled: true
-            ipv4:
-              - address: "{{ loopback_ip }}"
-          - name: "{{ item.name }}"
-            description: "{{ item.description }}"
-            enabled: true
-            ipv4:
-              - address: "{{ item.ip }}"
+      cisco.ios.ios_config:
+        lines:
+          - interface {{ loopback_interface }}
+          - description System Loopback
+          - ip address {{ loopback_ip }}
+          - no shutdown
+
+    - name: Configure Cisco Physical Interfaces
+      when: "'cisco' in group_names"
+      cisco.ios.ios_config:
+        lines:
+          - interface {{ item.name }}
+          - description {{ item.description }}
+          - ip address {{ item.ip }}
+          - no shutdown
       loop: "{{ interfaces }}"
 
-    - name: Configure Arista Interfaces
+    - name: Configure Arista Loopback Interface
       when: "'arista' in group_names"
-      arista.eos.eos_interfaces:
-        config:
-          - name: "{{ loopback_interface }}"
-            description: "System Loopback"
-            enabled: true
-            ipv4:
-              - address: "{{ loopback_ip }}"
-          - name: "{{ item.name }}"
-            description: "{{ item.description }}"
-            enabled: true
-            ipv4:
-              - address: "{{ item.ip }}"
+      arista.eos.eos_config:
+        lines:
+          - interface {{ loopback_interface }}
+          - description System Loopback
+          - ip address {{ loopback_ip }}
+          - no shutdown
+
+    - name: Configure Arista Physical Interfaces
+      when: "'arista' in group_names"
+      arista.eos.eos_config:
+        lines:
+          - interface {{ item.name }}
+          - description {{ item.description }}
+          - ip address {{ item.ip }}
+          - no shutdown
       loop: "{{ interfaces }}"
 
-    - name: Configure Juniper Interfaces
+    - name: Configure Juniper Loopback Interface
       when: ansible_network_os == 'junipernetworks.junos.junos'
-      junipernetworks.junos.junos_interfaces:
-        config:
-          - name: "{{ loopback_interface }}.0" # Junos loopbacks require a logical unit
-            description: "System Loopback"
-            enabled: true
-            ipv4:
-              - address: "{{ loopback_ip }}"
-          - name: "{{ item.name }}"
-            description: "{{ item.description }}"
-            enabled: true
-            ipv4:
-              - address: "{{ item.ip }}"
+      junipernetworks.junos.junos_config:
+        lines:
+          - set interfaces {{ loopback_interface }} unit 0 family inet address {{ loopback_ip }}
+
+    - name: Configure Juniper Physical Interfaces
+      when: ansible_network_os == 'junipernetworks.junos.junos'
+      junipernetworks.junos.junos_config:
+        lines:
+          - set interfaces {{ item.name }} description "{{ item.description }}"
+          - set interfaces {{ item.name }} unit 0 family inet address {{ item.ip }}
       loop: "{{ interfaces }}"
 ```
 
 ### Explanation of the Playbook
 
-*   **`*_interfaces` modules**: These are more advanced modules that take structured data (`config:`) as input. This is a more modern and robust way to manage interfaces than using the generic `*_config` modules with text-based commands.
+*   **Vendor-specific modules**: We use the `ios_config`, `eos_config`, and `junos_config` modules so we can send the native CLI commands required for each platform. Interface modules are version-specific and can be finicky in simulator environments, whereas the config modules work consistently by pushing the exact text commands.
 *   **`loop: "{{ interfaces }}"`**: This is a **loop**. The task will run once for each item in the `interfaces` list (which we defined in our `host_vars` files).
 *   **`item` variable**: Inside a loop, Ansible puts the current item into a special variable called `item`. So, `{{ item.name }}` refers to the `name` key of the current interface dictionary in the list.
 *   **Juniper Logical Unit**: Notice that for the Juniper loopback, we added `.0` to the name (`lo0.0`). Junos requires IP addresses to be configured on logical "units" of an interface.
