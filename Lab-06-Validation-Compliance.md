@@ -131,6 +131,7 @@ This playbook will use no configuration modules. It is purely for reading and ch
 *   **`when: r_ospf_neighbors.stdout is defined`**: This is a safety check. The `assert` task will only run if the variable from the `register` keyword was actually created.
 *   **`ansible.builtin.assert`**: This module checks the conditions you list in the `that:` block. If any condition is false, the entire playbook fails for that host. This is exactly what we want for a validation test! The expressions inside `that:` are already Jinja, so do **not** wrap them in `{{ }}`. Use concatenation like `' ' ~ ...` when you need to build strings, as shown in the route validation task.
 *   **Connection handling**: Leave `connection` unset in the play so that each host uses the value from `inventory`. Cisco/Arista will use `network_cli` while Juniper keeps `netconf`, which is required for the Junos modules.
+*   **NTP prerequisite**: These compliance checks assume each router was previously configured with the Lab 3 NTP server (`130.126.24.24`). If you haven't run your `base_config`/Lab 3 playbooks recently, reapply them (or manually configure `ntp server 130.126.24.24`) before running this validation playbook.
 *   `fail_msg` / `success_msg`: These make the output of the playbook very easy to read, telling you exactly what passed or failed.
 *   **Filters (`| ipaddr('address')`, `| default('')`)**:
     *   `ipaddr('address')` is a filter that extracts just the IP address from a prefix (e.g., `10.222.201.3/32` -> `10.222.201.3`).
