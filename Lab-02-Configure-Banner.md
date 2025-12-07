@@ -70,9 +70,7 @@ Our goal is to set a consistent MOTD banner on all three of our devices. Each de
     - name: Set the MOTD banner
       junipernetworks.junos.junos_config:
         lines:
-          - "message \"This device is managed by Ansible.\";"
-        parents:
-          - edit system login
+          - "set system login message \"This device is managed by Ansible.\""
 ```
 
 ### Explanation of the Playbook
