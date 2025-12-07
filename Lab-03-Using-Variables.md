@@ -51,7 +51,7 @@ Let's use this to set the hostname for each of our devices.
           hostname: "{{ inventory_hostname }}"
 
     - name: Configure hostname on Juniper Junos
-      when: ansible_network_os == 'junipernetworks.junos'
+      when: ansible_network_os is search('junipernetworks.junos')
       junipernetworks.junos.junos_hostname:
         config:
           hostname: "{{ inventory_hostname }}"
@@ -63,7 +63,7 @@ Let's use this to set the hostname for each of our devices.
 *   **`when: ansible_network_os == 'cisco.ios.ios'`**: This is a **conditional statement**. This task will *only* run on devices where the `ansible_network_os` variable matches `'cisco.ios.ios'`. This allows us to have vendor-specific tasks all within the same play. It's a more efficient way of handling different device types than creating multiple plays.
 *   **`ios_hostname`, `eos_hostname`, `junos_hostname`**: These are more specific modules designed just for managing hostnames. They expect a `config` dictionary containing the desired hostname, which we populate with `inventory_hostname`.
 *   **`hostname: "{{ inventory_hostname }}"`**: Here we are using the `inventory_hostname` variable. For the device `r1`, this will resolve to the string "r1". For `r2`, it will be "r2", and so on.
-*   **Junos NETCONF reminder**: Ensure your inventory (from Lab 1) sets `ansible_connection=ansible.netcommon.netconf`, `ansible_network_os=junipernetworks.junos`, and `ansible_port=830` for Juniper devices so `junos_hostname` can communicate successfully.
+*   **Junos NETCONF reminder**: Ensure your inventory (from Lab 1) sets `ansible_connection=ansible.netcommon.netconf`, `ansible_network_os=junipernetworks.junos`, and `ansible_port=830` for Juniper devices so `junos_hostname` can communicate successfully (the `when: ansible_network_os is search('junipernetworks.junos')` expression tolerates either `junipernetworks.junos` or `junipernetworks.junos.junos`).
 
 ### Run the Hostname Playbook
 
@@ -121,7 +121,7 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
           - ntp server {{ ntp_server }}
 
     - name: Configure NTP, DNS, and Domain Name on Juniper Junos
-      when: ansible_network_os == 'junipernetworks.junos'
+      when: ansible_network_os is search('junipernetworks.junos')
       junipernetworks.junos.junos_config:
         lines:
           - set system domain-name {{ domain_name }}
@@ -134,7 +134,7 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
 *   **`vars:`**: This block at the top of the play is where we define our custom variables. We've created `ntp_server`, `dns_server`, and `domain_name`.
 *   **`{{ ntp_server }}`**: In our tasks, we reference our variables using the same `{{ }}` syntax. Ansible will substitute the value from the `vars:` block before running the task.
 *   **Generic `*_config` modules**: We've returned to the generic config modules here, as they allow us to apply multiple lines of configuration in a single task, which is very efficient.
-*   **Junos commands**: Because Junos modules expect actual `set ...` statements, we provide the complete commands in each list entry. The NETCONF settings discussed in Lab 1 still apply here.
+*   **Junos commands**: Because Junos modules expect actual `set ...` statements, we provide the complete commands in each list entry. The NETCONF settings discussed in Lab 1 still apply here, and the `when: ansible_network_os is search('junipernetworks.junos')` check allows either of the common Junos strings.
 
 ### Run the System Playbook
 
