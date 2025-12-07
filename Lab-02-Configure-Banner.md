@@ -56,11 +56,11 @@ Our goal is to set a consistent MOTD banner on all three of our devices. Each de
 
   tasks:
     - name: Set the MOTD banner
-      arista.eos.eos_config:
-        lines:
-          - This device is managed by Ansible.
-        parents:
-          - banner motd
+      arista.eos.eos_banner:
+        banner: motd
+        text: |
+          This device is managed by Ansible.
+        state: present
 
 - name: Configure Banner on Juniper Junos Devices
   hosts: juniper
@@ -79,7 +79,7 @@ Our goal is to set a consistent MOTD banner on all three of our devices. Each de
 
 *   **Three Plays:** We are using three separate plays, targeting the `cisco`, `arista`, and `juniper` groups respectively. This is a clear way to run different tasks for different device types.
 *   **`cisco.ios.ios_banner`**: This banner-specific module handles the special Cisco syntax automatically (no need to manage delimiters like `banner motd c ... c`). We simply supply the banner type (`motd`) and the text, and the module takes care of the rest.
-*   **`arista.eos.eos_config`**: This works almost identically to the Cisco module for this task.
+*   **`arista.eos.eos_banner`**: Similar to the IOS banner module, this handles EOS banner syntax without you having to worry about delimiters or prompts.
 *   **`junipernetworks.junos.junos_config`**: The Juniper module is similar, but it uses Junos's `set`-style syntax. Note the escaped quotes (`\" \"`) around the message, which Junos requires when spaces are present.
 
 ### Run and Verify the Banner Playbook

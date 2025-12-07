@@ -2,6 +2,9 @@
 ansible_user=admin
 ansible_password=800-ePlus
 ansible_command_timeout=120
+ansible_become=true
+ansible_become_method=enable
+ansible_become_password=800-ePlus
 
 [cisco]
 r1 ansible_host=10.222.1.17
@@ -17,6 +20,7 @@ r2 ansible_host=10.222.1.37
 [arista:vars]
 ansible_network_os=arista.eos.eos
 ansible_connection=ansible.netcommon.network_cli
+ansible_become_method=enable
 
 [juniper]
 r3 ansible_host=10.222.1.57
