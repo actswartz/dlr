@@ -2,7 +2,7 @@
 
 Welcome to your first lab! The goal of this exercise is to introduce you to the fundamental concepts of Ansible, establish a connection to your network devices, and run your first commands.
 
-## Objectives
+## Objectives 🎯
 
 *   Understand and create an Ansible inventory file.
 *   Learn what an Ansible ad-hoc command is and how to use one.
@@ -20,6 +20,9 @@ For this lab, your three devices have already been pre-configured with:
 *   A unique management IP address.
 *   SSH access enabled.
 *   Authentication required with the username **`admin`** and password **`800-ePlus`** for all routers.
+
+![Lab Topology](images/topo.jpg)
+
 ---
 Management IP Address
 |       | Cisco       | Arista      | Juniper      |
@@ -44,7 +47,7 @@ Management IP Address
 
 ---
 
-## Part 1: Create Your Ansible Inventory
+## Part 1: Create Your Ansible Inventory 🗂️
 
 The first step in any Ansible project is to tell Ansible what devices it should manage. You do this with an **inventory file**. This file is a simple text document that lists the IP addresses or hostnames of your managed nodes.
 
@@ -145,7 +148,7 @@ If `netconf ssh;` is missing, NETCONF modules such as `junipernetworks.junos.jun
 
 ---
 
-## Part 2: First Contact with Ad-Hoc Commands
+## Part 2: First Contact with Ad-Hoc Commands 🛰️
 
 An **ad-hoc command** is a quick, one-line command that you can run to perform a single task. They are great for quick checks and simple actions but are not meant for complex, repeatable workflows.
 
@@ -197,7 +200,7 @@ r3 | SUCCESS => {
 
 ---
 
-## Part 3: Your First Playbook for Gathering Facts
+## Part 3: Your First Playbook for Gathering Facts 📋
 
 While ad-hoc commands are useful, most automation is done with **Playbooks**. A playbook is a file written in YAML that describes a set of tasks to be executed on your managed nodes.
 

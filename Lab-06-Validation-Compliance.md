@@ -4,7 +4,7 @@ So far, you have been using Ansible to *push* configuration to devices. This is 
 
 Instead of changing configuration, this playbook will run `show` commands, check the output for specific values, and either pass or fail based on what it finds.
 
-## Objectives
+## Objectives 🎯
 
 *   Learn to use vendor-specific `_command` modules to run operational commands.
 *   Use the `register` keyword to save the output of a task to a variable.
@@ -13,7 +13,7 @@ Instead of changing configuration, this playbook will run `show` commands, check
 
 ---
 
-## Part 1: The Validation Playbook
+## Part 1: The Validation Playbook 🧪
 
 Our goal is to create a single playbook that can be run at any time to perform a health check on our network. It will verify three key things:
 1.  Are the OSPF neighbor adjacencies `FULL`?
@@ -164,7 +164,7 @@ This playbook will use no configuration modules. It is purely for reading and ch
 
 ---
 
-## Part 2: Running the Validation Playbook
+## Part 2: Running the Validation Playbook ▶️
 
 ### Task: Run the playbook and interpret the results
 

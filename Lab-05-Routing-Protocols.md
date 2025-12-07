@@ -4,7 +4,7 @@ With interfaces configured, your routers can talk to devices on the same link, b
 
 The goal is to enable R1, R2, and R3 to all be able to `ping` each other's loopback addresses.
 
-## Objectives
+## Objectives 🎯
 
 *   Update `host_vars` files with structured data for a routing protocol.
 *   Write a playbook that configures OSPF on all three devices.
@@ -13,7 +13,7 @@ The goal is to enable R1, R2, and R3 to all be able to `ping` each other's loopb
 
 ---
 
-## Part 1: Updating `host_vars` for OSPF
+## Part 1: Updating `host_vars` for OSPF 📚
 
 Just as we did for interfaces, we will store our OSPF configuration data in our `host_vars` files. This keeps our playbook clean and our device-specific data logically organized.
 
@@ -79,7 +79,7 @@ Cisco and Arista configure OSPF by specifying which networks to advertise. Junip
 
 ---
 
-## Part 2: The OSPF Configuration Playbook
+## Part 2: The OSPF Configuration Playbook 🌐
 
 Now we will build a playbook that reads this new `ospf` data. It will use conditional tasks (`when:`) to apply the correct configuration style for each vendor.
 

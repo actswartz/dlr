@@ -2,7 +2,7 @@
 
 In Lab 1, you learned how to view information from your devices. Now it's time to make your first change! This lab will guide you through writing a playbook that configures a "Message of the Day" (MOTD) banner on your routers.
 
-## Objectives
+## Objectives 🎯
 
 *   Understand the concept of **Idempotency** in Ansible.
 *   Learn to use vendor-specific modules to configure a device.
@@ -21,7 +21,7 @@ This makes automation safe and predictable. You can run your playbooks over and 
 
 ---
 
-## Part 1: The Banner Configuration Playbook
+## Part 1: The Banner Configuration Playbook 🪧
 
 Our goal is to set a consistent MOTD banner on all three of our devices. Each device type (Cisco, Arista, Juniper) requires a slightly different set of commands to do this, so we will use vendor-specific modules.
 

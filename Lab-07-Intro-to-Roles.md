@@ -4,7 +4,7 @@ As you create more automation, you'll find you are rewriting the same logic in m
 
 Think of roles as functions in a programming language. You write the logic once inside the role, and then you can call that role from any playbook with a single line. In this lab, you will refactor the hostname, NTP, and DNS configurations from Lab 3 into a reusable `base_config` role.
 
-## Objectives
+## Objectives 🎯
 
 *   Understand the purpose and structure of an Ansible Role.
 *   Use the `ansible-galaxy` command to create a role directory structure.
@@ -13,7 +13,7 @@ Think of roles as functions in a programming language. You write the logic once 
 
 ---
 
-## Part 1: Creating the Role Directory Structure
+## Part 1: Creating the Role Directory Structure 🗂️
 
 Ansible has a standard directory structure for roles. While you can create these directories by hand, the `ansible-galaxy` command makes it easy.
 
@@ -37,7 +37,7 @@ Ansible has a standard directory structure for roles. While you can create these
 
 ---
 
-## Part 2: Refactoring Your Automation into the Role
+## Part 2: Refactoring Your Automation into the Role 🔁
 
 Our goal is to move the logic from `configure_hostnames.yml` and `configure_system.yml` (Lab 3) into our new role.
 
@@ -124,7 +124,7 @@ Our goal is to move the logic from `configure_hostnames.yml` and `configure_syst
 
 ---
 
-## Part 3: Using the Role in a Playbook
+## Part 3: Using the Role in a Playbook ▶️
 
 Now that the complex logic is hidden away in the role, our playbook becomes incredibly simple and readable.
 

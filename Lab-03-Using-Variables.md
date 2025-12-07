@@ -4,7 +4,7 @@ In the last lab, we hard-coded the banner message directly into our playbook. Th
 
 This lab will teach you how to use variables to make your playbooks more flexible, scalable, and easier to read.
 
-## Objectives
+## Objectives 🎯
 
 *   Understand how to use built-in Ansible variables like `inventory_hostname`.
 *   Learn to define and use your own variables in a playbook.
@@ -14,7 +14,7 @@ This lab will teach you how to use variables to make your playbooks more flexibl
 
 ---
 
-## Part 1: Using Built-in Variables for Hostnames
+## Part 1: Using Built-in Variables for Hostnames 🏷️
 
 Ansible provides many "magic" built-in variables that contain information about the hosts it's managing. One of the most useful is `inventory_hostname`, which holds the name of the host as defined in your inventory file (e.g., `r1`, `r2`).
 
@@ -78,7 +78,7 @@ Let's use this to set the hostname for each of our devices.
 
 ---
 
-## Part 2: Using Custom Variables for System Settings
+## Part 2: Using Custom Variables for System Settings ⚙️
 
 Now let's define our own variables to manage NTP and DNS settings. Defining variables at the top of a play makes your playbook cleaner and easier to update. If you ever need to change the NTP server, you only have to change it in one place!
 

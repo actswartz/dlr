@@ -4,7 +4,7 @@ So far, we have worked with variables defined directly inside the playbook. For 
 
 In this lab, you will learn to use **`host_vars`**, Ansible's standard method for managing device-specific variables. You will use `host_vars` to define the IP addresses for your router interfaces and then write a playbook to apply that configuration.
 
-## Objectives
+## Objectives 🎯
 
 *   Understand how to use `host_vars` to manage device-specific variables.
 *   Structure complex data, like a list of interfaces, within a YAML file.
@@ -35,7 +35,7 @@ Only the **management IP addresses** (used by Ansible to connect to the devices)
 
 ---
 
-## Part 1: Creating `host_vars` Files
+## Part 1: Creating `host_vars` Files 📁
 
 The `host_vars` directory is a special folder that Ansible automatically checks. When you create a file inside it named after a host in your inventory (e.g., `r1.yml`), all the variables in that file are automatically applied to that host.
 
@@ -111,7 +111,7 @@ The `host_vars` directory is a special folder that Ansible automatically checks.
 
 ---
 
-## Part 2: The Interface Configuration Playbook
+## Part 2: The Interface Configuration Playbook 🔌
 
 Now we will build a playbook that reads the data from our `host_vars` files and uses it to configure the interfaces. This playbook will use more advanced, vendor-specific `*_interfaces` modules for robust configuration.
 
