@@ -136,27 +136,27 @@ Now we will build a playbook that reads the data from our `host_vars` files and 
     - name: Configure Cisco Loopback Interface
       when: "'cisco' in group_names"
       cisco.ios.ios_config:
+        parents: "interface {{ loopback_interface }}"
         lines:
-          - interface {{ loopback_interface }}
           - description System Loopback
-          - ip address {{ loopback_ip }}
+          - ip address {{ loopback_ip | ansible.utils.ipaddr('address') }} {{ loopback_ip | ansible.utils.ipaddr('netmask') }}
           - no shutdown
 
     - name: Configure Cisco Physical Interfaces
       when: "'cisco' in group_names"
       cisco.ios.ios_config:
+        parents: "interface {{ item.name }}"
         lines:
-          - interface {{ item.name }}
           - description {{ item.description }}
-          - ip address {{ item.ip }}
+          - ip address {{ item.ip | ansible.utils.ipaddr('address') }} {{ item.ip | ansible.utils.ipaddr('netmask') }}
           - no shutdown
       loop: "{{ interfaces }}"
 
     - name: Configure Arista Loopback Interface
       when: "'arista' in group_names"
       arista.eos.eos_config:
+        parents: "interface {{ loopback_interface }}"
         lines:
-          - interface {{ loopback_interface }}
           - description System Loopback
           - ip address {{ loopback_ip }}
           - no shutdown
@@ -164,8 +164,8 @@ Now we will build a playbook that reads the data from our `host_vars` files and 
     - name: Configure Arista Physical Interfaces
       when: "'arista' in group_names"
       arista.eos.eos_config:
+        parents: "interface {{ item.name }}"
         lines:
-          - interface {{ item.name }}
           - description {{ item.description }}
           - ip address {{ item.ip }}
           - no shutdown
@@ -188,7 +188,7 @@ Now we will build a playbook that reads the data from our `host_vars` files and 
 
 ### Explanation of the Playbook
 
-*   **Vendor-specific modules**: We use the `ios_config`, `eos_config`, and `junos_config` modules so we can send the native CLI commands required for each platform. Interface modules are version-specific and can be finicky in simulator environments, whereas the config modules work consistently by pushing the exact text commands.
+*   **Vendor-specific modules**: We use the `ios_config`, `eos_config`, and `junos_config` modules so we can send the native CLI commands required for each platform. Interface modules are version-specific and can be finicky in simulator environments, whereas the config modules work consistently by pushing the exact text commands. The Cisco tasks use the `ansible.utils.ipaddr` filter to split the prefix (`10.1.1.1/32`) into an IP address and dotted-decimal mask (e.g., `255.255.255.0`) because the IOS IOL images in this class require that syntax.
 *   **`loop: "{{ interfaces }}"`**: This is a **loop**. The task will run once for each item in the `interfaces` list (which we defined in our `host_vars` files).
 *   **`item` variable**: Inside a loop, Ansible puts the current item into a special variable called `item`. So, `{{ item.name }}` refers to the `name` key of the current interface dictionary in the list.
 *   **Juniper Logical Unit**: Notice that for the Juniper loopback, we added `.0` to the name (`lo0.0`). Junos requires IP addresses to be configured on logical "units" of an interface.
