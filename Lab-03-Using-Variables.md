@@ -41,30 +41,33 @@ Let's use this to set the hostname for each of our devices.
     - name: Configure hostname on Cisco IOS
       when: ansible_network_os == 'cisco.ios.ios'
       cisco.ios.ios_hostname:
-        hostname: "{{ inventory_hostname }}"
+        config:
+          hostname: "{{ inventory_hostname }}"
 
     - name: Configure hostname on Arista EOS
       when: ansible_network_os == 'arista.eos.eos'
       arista.eos.eos_hostname:
-        hostname: "{{ inventory_hostname }}"
+        config:
+          hostname: "{{ inventory_hostname }}"
 
     - name: Configure hostname on Juniper Junos
       when: ansible_network_os == 'junipernetworks.junos'
       junipernetworks.junos.junos_hostname:
-        name: "{{ inventory_hostname }}"
+        config:
+          hostname: "{{ inventory_hostname }}"
 ```
 
 ### Explanation of the Playbook
 
 *   **`hosts: routers`**: This time, we are running a single play against all our routers.
 *   **`when: ansible_network_os == 'cisco.ios.ios'`**: This is a **conditional statement**. This task will *only* run on devices where the `ansible_network_os` variable matches `'cisco.ios.ios'`. This allows us to have vendor-specific tasks all within the same play. It's a more efficient way of handling different device types than creating multiple plays.
-*   **`ios_hostname`, `eos_hostname`, `junos_hostname`**: These are more specific modules designed just for managing hostnames. They are often simpler than using the generic `*_config` modules.
+*   **`ios_hostname`, `eos_hostname`, `junos_hostname`**: These are more specific modules designed just for managing hostnames. They expect a `config` dictionary containing the desired hostname, which we populate with `inventory_hostname`.
 *   **`hostname: "{{ inventory_hostname }}"`**: Here we are using the `inventory_hostname` variable. For the device `r1`, this will resolve to the string "r1". For `r2`, it will be "r2", and so on.
 *   **Junos NETCONF reminder**: Ensure your inventory (from Lab 1) sets `ansible_connection=ansible.netcommon.netconf`, `ansible_network_os=junipernetworks.junos`, and `ansible_port=830` for Juniper devices so `junos_hostname` can communicate successfully.
 
 ### Run the Hostname Playbook
 
-1.  Execute the playbook from your terminal.
+1.  From your `gem` directory (where the `inventory` file lives), execute the playbook. If you are elsewhere, supply the full path to the inventory with `-i /path/to/gem/inventory`.
 
     ```bash
     ansible-playbook -i inventory configure_hostnames.yml
@@ -135,7 +138,7 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
 
 ### Run the System Playbook
 
-1.  Execute the playbook from your terminal.
+1.  From your `gem` directory (where the `inventory` file lives), execute the playbook or provide the full inventory path explicitly.
 
     ```bash
     ansible-playbook -i inventory configure_system.yml
