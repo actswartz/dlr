@@ -45,10 +45,16 @@ This playbook will use no configuration modules. It is purely for reading and ch
     ntp_server: 130.126.24.24
 
   tasks:
-    - name: 1. CHECK OSPF NEIGHBORS (Cisco/Arista)
-      when: "'cisco' in group_names or 'arista' in group_names"
-      ansible.netcommon.net_command:
-        command: "show ip ospf neighbor"
+    - name: 1. CHECK OSPF NEIGHBORS (Cisco IOS)
+      when: "'cisco' in group_names"
+      ansible.netcommon.cli_command:
+        command: show ip ospf neighbor
+      register: r_ospf_neighbors
+
+    - name: 1. CHECK OSPF NEIGHBORS (Arista EOS)
+      when: "'arista' in group_names"
+      ansible.netcommon.cli_command:
+        command: show ip ospf neighbor
       register: r_ospf_neighbors
 
     - name: 1. VALIDATE OSPF NEIGHBORS (Cisco/Arista)
@@ -61,8 +67,8 @@ This playbook will use no configuration modules. It is purely for reading and ch
 
     - name: 1. CHECK OSPF NEIGHBORS (Juniper)
       when: ansible_network_os == 'junipernetworks.junos.junos'
-      ansible.netcommon.net_command:
-        command: "show ospf neighbor"
+      ansible.netcommon.cli_command:
+        command: show ospf neighbor
       register: r_junos_ospf_neighbors
 
     - name: 1. VALIDATE OSPF NEIGHBORS (Juniper)
@@ -75,7 +81,7 @@ This playbook will use no configuration modules. It is purely for reading and ch
 
     - name: 2. CHECK ROUTE on R1
       when: inventory_hostname == 'r1'
-      ansible.netcommon.net_command:
+      ansible.netcommon.cli_command:
         command: "show ip route {{ hostvars['r3'].loopback_ip | ipaddr('address') }}"
       register: r_r1_route
 
@@ -87,15 +93,21 @@ This playbook will use no configuration modules. It is purely for reading and ch
         fail_msg: "Route from R1 to R3 loopback is incorrect!"
         success_msg: "Route from R1 to R3 loopback is correct."
 
-    - name: 3. CHECK NTP COMPLIANCE
-      ansible.netcommon.net_command:
-        command: "show running-config | include ntp"
-      when: "'cisco' in group_names or 'arista' in group_names"
+    - name: 3. CHECK NTP COMPLIANCE (Cisco)
+      ansible.netcommon.cli_command:
+        command: show running-config | include ntp
+      when: "'cisco' in group_names"
+      register: r_ntp_config
+
+    - name: 3. CHECK NTP COMPLIANCE (Arista)
+      ansible.netcommon.cli_command:
+        command: show running-config | include ntp
+      when: "'arista' in group_names"
       register: r_ntp_config
 
     - name: 3. CHECK NTP COMPLIANCE (Juniper)
-      ansible.netcommon.net_command:
-        command: "show configuration system ntp"
+      ansible.netcommon.cli_command:
+        command: show configuration system ntp
       when: ansible_network_os == 'junipernetworks.junos.junos'
       register: r_ntp_config_junos
 
