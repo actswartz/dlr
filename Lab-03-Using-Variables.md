@@ -109,7 +109,7 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
       when: "'cisco' in group_names"
       cisco.ios.ios_config:
         lines:
-          - ip domain-name {{ domain_name }}
+          - ip domain name {{ domain_name }}
           - ip name-server {{ dns_server }}
           - ntp server {{ ntp_server }}
 
@@ -134,7 +134,7 @@ Now let's define our own variables to manage NTP and DNS settings. Defining vari
 
 *   **`vars:`**: This block at the top of the play is where we define our custom variables. We've created `ntp_server`, `dns_server`, and `domain_name`.
 *   **`{{ ntp_server }}`**: In our tasks, we reference our variables using the same `{{ }}` syntax. Ansible will substitute the value from the `vars:` block before running the task.
-*   **Generic `*_config` modules**: We've returned to the generic config modules here, as they allow us to apply multiple lines of configuration in a single task, which is very efficient. We still leverage group-based conditionals (`'cisco' in group_names`, etc.) so the proper vendor block runs regardless of the exact inventory strings you use.
+*   **Generic `*_config` modules**: We've returned to the generic config modules here, as they allow us to apply multiple lines of configuration in a single task, which is very efficient. We still leverage group-based conditionals (`'cisco' in group_names`, etc.) so the proper vendor block runs regardless of the exact inventory strings you use. Note that some Cisco IOS simulators (like IOL) require the command `ip domain name` (with a space) instead of the dash—adjust the line if your platform expects the other spelling. Arista EOS retains the `ip domain-name` syntax shown above.
 *   **Junos commands**: Because Junos modules expect actual `set ...` statements, we provide the complete commands in each list entry. The NETCONF settings discussed in Lab 1 still apply here, and we explicitly match `ansible_network_os == 'junipernetworks.junos.junos'` to stay aligned with the packages used in this lab environment.
 
 ### Run the System Playbook
