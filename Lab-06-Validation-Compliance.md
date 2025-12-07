@@ -60,7 +60,7 @@ This playbook will use no configuration modules. It is purely for reading and ch
         success_msg: "OSPF neighbors are FULL on {{ inventory_hostname }}."
 
     - name: 1. CHECK OSPF NEIGHBORS (Juniper)
-      when: "'juniper' in group_names"
+      when: ansible_network_os == 'junipernetworks.junos.junos'
       ansible.netcommon.net_command:
         command: "show ospf neighbor"
       register: r_junos_ospf_neighbors
@@ -96,7 +96,7 @@ This playbook will use no configuration modules. It is purely for reading and ch
     - name: 3. CHECK NTP COMPLIANCE (Juniper)
       ansible.netcommon.net_command:
         command: "show configuration system ntp"
-      when: "'juniper' in group_names"
+      when: ansible_network_os == 'junipernetworks.junos.junos'
       register: r_ntp_config_junos
 
     - name: 3. VALIDATE NTP COMPLIANCE

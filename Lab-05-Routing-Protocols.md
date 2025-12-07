@@ -117,7 +117,7 @@ Now we will build a playbook that reads this new `ospf` data. It will use condit
         lines: "{{ ospf.networks }}"
 
     - name: Configure OSPF on Juniper Devices
-      when: "'juniper' in group_names"
+      when: ansible_network_os == 'junipernetworks.junos.junos'
       junipernetworks.junos.junos_config:
         lines:
           - "set protocols ospf area {{ ospf.area }} interface {{ item }}"

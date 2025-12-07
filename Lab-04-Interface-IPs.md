@@ -166,7 +166,7 @@ Now we will build a playbook that reads the data from our `host_vars` files and 
       loop: "{{ interfaces }}"
 
     - name: Configure Juniper Interfaces
-      when: "'juniper' in group_names"
+      when: ansible_network_os == 'junipernetworks.junos.junos'
       junipernetworks.junos.junos_interfaces:
         config:
           - name: "{{ loopback_interface }}.0" # Junos loopbacks require a logical unit
