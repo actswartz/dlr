@@ -2,7 +2,7 @@
 
 Congratulations on reaching the final lab! This capstone project is where you will combine all the skills you've developed—variables, modules, conditionals, and roles—into a single, master workflow that can provision an entire pod from a baseline state and then validate its own work.
 
-## Objectives
+## Objectives 🎯
 
 *   Encapsulate all of your automation logic into a set of clean, reusable roles.
 *   Create a single, top-level playbook that orchestrates the entire pod configuration by calling your roles in the correct order.
@@ -11,7 +11,7 @@ Congratulations on reaching the final lab! This capstone project is where you wi
 
 ---
 
-## Part 1: Creating Roles for Interfaces and OSPF
+## Part 1: Creating Roles for Interfaces and OSPF 🧱
 
 Just as you did for the `base_config` in Lab 7, you will now create roles for your interface and OSPF configurations.
 
@@ -76,7 +76,7 @@ gem/
 
 ---
 
-## Part 2: The Master Provisioning Playbook
+## Part 2: The Master Provisioning Playbook 🚦
 
 Now you will update your `site.yml` to be the single playbook responsible for provisioning a pod. It will do this by calling all three of your roles in the correct order.
 
@@ -108,7 +108,7 @@ This simple, declarative file is now the blueprint for your entire network confi
 
 ---
 
-## Part 3: The Capstone Playbook (`provision_and_validate.yml`)
+## Part 3: The Capstone Playbook (`provision_and_validate.yml`) 🔁
 
 The final step is to create a master playbook that first provisions the network and then immediately validates it. This is a common pattern in professional automation, often used in CI/CD pipelines.
 
@@ -141,7 +141,7 @@ The final step is to create a master playbook that first provisions the network 
 
 ---
 
-## Part 4: Run the Capstone Project
+## Part 4: Run the Capstone Project ✅
 
 You are now ready to run your zero-touch provisioning and validation workflow.
 
@@ -155,7 +155,7 @@ You are now ready to run your zero-touch provisioning and validation workflow.
 
 If everything is correct, the entire playbook will run from start to finish without errors, culminating in a series of "success" messages from your `assert` tasks. You just configured and tested your entire network with a single command.
 
-## Course Conclusion
+## Course Conclusion 🏁
 
 Congratulations! You have completed the Ansible for Network Automation course. You've progressed from basic ad-hoc commands to building a fully automated, multi-vendor provisioning and validation workflow using professional-grade practices like roles and data separation.
 

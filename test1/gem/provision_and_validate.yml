@@ -1,0 +1,6 @@
+---
+- name: Import the Provisioning Playbook
+  import_playbook: site.yml
+
+- name: Import the Validation Playbook
+  import_playbook: validate_network.yml

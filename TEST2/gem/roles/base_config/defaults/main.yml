@@ -1,0 +1,4 @@
+---
+ntp_server: 130.126.24.24
+dns_server: 8.8.8.8
+domain_name: eplus.io

@@ -1,0 +1,29 @@
+[all:vars]
+ansible_user=admin
+ansible_password=800-ePlus
+ansible_connection=network_cli
+
+[cisco]
+r1 ansible_host=10.222.1.17
+
+[arista]
+r2 ansible_host=10.222.1.37
+
+[juniper]
+r3 ansible_host=10.222.1.57
+
+[routers:children]
+cisco
+arista
+juniper
+
+[cisco:vars]
+ansible_network_os=cisco.ios.ios
+
+[arista:vars]
+ansible_network_os=arista.eos.eos
+
+[juniper:vars]
+ansible_network_os=junipernetworks.junos.junos
+ansible_connection=ansible.netcommon.netconf
+ansible_port=830

@@ -1,0 +1,34 @@
+---
+- name: Configure Common System Settings
+  hosts: routers
+  gather_facts: false
+
+  vars:
+    ntp_server: 130.126.24.24
+    dns_server: 8.8.8.8
+    domain_name: eplus.io
+
+  tasks:
+    - name: Configure NTP, DNS, and Domain Name on Cisco IOS
+      when: "'cisco' in group_names"
+      cisco.ios.ios_config:
+        lines:
+          - ip domain name {{ domain_name }}
+          - ip name-server {{ dns_server }}
+          - ntp server {{ ntp_server }}
+
+    - name: Configure NTP, DNS, and Domain Name on Arista EOS
+      when: "'arista' in group_names"
+      arista.eos.eos_config:
+        lines:
+          - ip domain-name {{ domain_name }}
+          - ip name-server {{ dns_server }}
+          - ntp server {{ ntp_server }}
+
+    - name: Configure NTP, DNS, and Domain Name on Juniper Junos
+      when: ansible_network_os == 'junipernetworks.junos.junos'
+      junipernetworks.junos.junos_config:
+        lines:
+          - set system domain-name {{ domain_name }}
+          - set system name-server {{ dns_server }}
+          - set system ntp server {{ ntp_server }}

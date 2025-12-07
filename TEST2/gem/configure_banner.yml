@@ -1,0 +1,34 @@
+---
+- name: Configure Banner on Cisco IOS Devices
+  hosts: cisco
+  gather_facts: false
+
+  tasks:
+    - name: Set the MOTD banner
+      cisco.ios.ios_banner:
+        banner: motd
+        text: |
+          This device is managed by Ansible.
+        state: present
+
+- name: Configure Banner on Arista EOS Devices
+  hosts: arista
+  gather_facts: false
+
+  tasks:
+    - name: Set the MOTD banner
+      arista.eos.eos_banner:
+        banner: motd
+        text: |
+          This device is managed by Ansible.
+        state: present
+
+- name: Configure Banner on Juniper Junos Devices
+  hosts: juniper
+  gather_facts: false
+
+  tasks:
+    - name: Set the MOTD banner
+      junipernetworks.junos.junos_config:
+        lines:
+          - 'set system login message "This device is managed by Ansible."'

@@ -1,0 +1,57 @@
+---
+- name: Configure Device Interfaces
+  hosts: routers
+  gather_facts: false
+
+  tasks:
+    - name: Configure Cisco Loopback Interface
+      when: "'cisco' in group_names"
+      cisco.ios.ios_config:
+        parents: "interface {{ loopback_interface }}"
+        lines:
+          - description System Loopback
+          - ip address {{ loopback_ip | ansible.utils.ipaddr('address') }} {{ loopback_ip | ansible.utils.ipaddr('netmask') }}
+          - no shutdown
+
+    - name: Configure Cisco Physical Interfaces
+      when: "'cisco' in group_names"
+      cisco.ios.ios_config:
+        parents: "interface {{ item.name }}"
+        lines:
+          - description {{ item.description }}
+          - ip address {{ item.ip | ansible.utils.ipaddr('address') }} {{ item.ip | ansible.utils.ipaddr('netmask') }}
+          - no shutdown
+      loop: "{{ interfaces }}"
+
+    - name: Configure Arista Loopback Interface
+      when: "'arista' in group_names"
+      arista.eos.eos_config:
+        parents: "interface {{ loopback_interface }}"
+        lines:
+          - description System Loopback
+          - ip address {{ loopback_ip }}
+          - no shutdown
+
+    - name: Configure Arista Physical Interfaces
+      when: "'arista' in group_names"
+      arista.eos.eos_config:
+        parents: "interface {{ item.name }}"
+        lines:
+          - description {{ item.description }}
+          - ip address {{ item.ip }}
+          - no shutdown
+      loop: "{{ interfaces }}"
+
+    - name: Configure Juniper Loopback Interface
+      when: ansible_network_os == 'junipernetworks.junos.junos'
+      junipernetworks.junos.junos_config:
+        lines:
+          - set interfaces {{ loopback_interface }} unit 0 family inet address {{ loopback_ip }}
+
+    - name: Configure Juniper Physical Interfaces
+      when: ansible_network_os == 'junipernetworks.junos.junos'
+      junipernetworks.junos.junos_config:
+        lines:
+          - set interfaces {{ item.name }} description "{{ item.description }}"
+          - set interfaces {{ item.name }} unit 0 family inet address {{ item.ip }}
+      loop: "{{ interfaces }}"

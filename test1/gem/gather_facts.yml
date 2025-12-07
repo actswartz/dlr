@@ -1,0 +1,12 @@
+---
+- name: Gather and Display Device Facts
+  hosts: routers
+  gather_facts: false
+
+  tasks:
+    - name: Gather device facts
+      ansible.builtin.gather_facts:
+
+    - name: Display OS Version for each device
+      ansible.builtin.debug:
+        msg: "The OS version of {{ inventory_hostname }} is {{ ansible_facts.net_version }}"

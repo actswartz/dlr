@@ -1,0 +1,23 @@
+---
+- name: Configure Device Hostnames
+  hosts: routers
+  gather_facts: false
+
+  tasks:
+    - name: Configure hostname on Cisco IOS
+      when: "'cisco' in group_names"
+      cisco.ios.ios_hostname:
+        config:
+          hostname: "{{ inventory_hostname }}"
+
+    - name: Configure hostname on Arista EOS
+      when: "'arista' in group_names"
+      arista.eos.eos_hostname:
+        config:
+          hostname: "{{ inventory_hostname }}"
+
+    - name: Configure hostname on Juniper Junos
+      when: ansible_network_os == 'junipernetworks.junos.junos'
+      junipernetworks.junos.junos_hostname:
+        config:
+          hostname: "{{ inventory_hostname }}"
