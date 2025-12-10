@@ -72,13 +72,13 @@ ansible_password=800-ePlus
 ansible_connection=network_cli
 
 [cisco]
-r1 ansible_host=10.222.1.1X
+r1 ansible_host=10.222.1.17
 
 [arista]
-r2 ansible_host=10.222.1.3X
+r2 ansible_host=10.222.1.37
 
 [juniper]
-r3 ansible_host=10.222.1.5X
+r3 ansible_host=10.222.1.57
 
 [routers:children]
 cisco
@@ -87,12 +87,19 @@ juniper
 
 [cisco:vars]
 ansible_network_os=cisco.ios.ios
+ansible_connection=ansible.netcommon.network_cli
+ansible_network_cli_ssh_type=paramiko
+ansible_command_timeout=120
 
 [arista:vars]
 ansible_network_os=arista.eos.eos
+ansible_connection=ansible.netcommon.network_cli
+ansible_become=true
+ansible_become_method=enable
+ansible_become_password=800-ePlus
 
 [juniper:vars]
-ansible_network_os=junipernetworks.junos
+ansible_network_os=junipernetworks.junos.junos
 ansible_connection=ansible.netcommon.netconf
 ansible_port=830
 ```
