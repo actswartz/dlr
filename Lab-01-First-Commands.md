@@ -114,46 +114,7 @@ ansible_port=830
 *   **`[juniper:vars]`**: Along with `ansible_network_os`, we override the connection settings for Junos devices to use NETCONF (`ansible_connection=ansible.netcommon.netconf`) on TCP port 830, which is required by Juniper fact-gathering modules.
 *   **`[routers:children]`**: This creates a new group called `routers` that contains other groups. It's a convenient way to target all of your network devices at once.
 
-### Ensure NETCONF over SSH is enabled on R3
 
-The Juniper `junipernetworks.junos.*` modules communicate over NETCONF, so R3 must have NETCONF enabled.
-
-1.  From the same control node where you run Ansible, SSH to R3 manually (replace `<r3-ip>` with your management IP).
-
-    ```bash
-    ssh admin@<r3-ip>
-    ```
-
-2.  Enter configuration mode and enable NETCONF over SSH.
-
-    ```bash
-    configure
-    set system services netconf ssh
-    commit
-    ```
-
-3.  Verify the service is enabled.
-
-    ```bash
-    show configuration system services
-    ```
-
-    You should see:
-
-    ```text
-    system {
-        services {
-            ssh;
-            netconf {
-                ssh;
-            }
-        }
-    }
-    ```
-
-If `netconf ssh;` is missing, NETCONF modules such as `junipernetworks.junos.junos_facts` will time out.
-
----
 
 ## Part 2: First Contact with Ad-Hoc Commands 🛰️
 
