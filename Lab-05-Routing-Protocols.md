@@ -150,28 +150,28 @@ These templates pull data from the `ospf` dictionary in each device's `host_vars
     ```
 
 3.  Copy and paste the following YAML into the file.
-
 ```yaml
 ---
 - name: Configure OSPF Routing Protocol
   hosts: routers
   gather_facts: false
-
   tasks:
     - name: Configure OSPF on Cisco IOS
       when: "'cisco' in group_names"
       cisco.ios.ios_config:
-        src: templates/ospf_ios.j2
-
+        lines: "{{ lookup('template', 'templates/ospf_ios.j2') }}"
     - name: Configure OSPF on Arista EOS
       when: "'arista' in group_names"
       arista.eos.eos_config:
-        src: templates/ospf_eos.j2
-
+        lines: "{{ lookup('template', 'templates/ospf_eos.j2') }}"
     - name: Configure OSPF on Juniper Devices
       when: ansible_network_os == 'junipernetworks.junos.junos'
       junipernetworks.junos.junos_config:
-        src: templates/ospf_junos.j2
+        lines: "{{ lookup('template', 'templates/ospf_junos.j2') }}"
+    - name: Debug OSPF vars
+      debug:
+        var: ospf
+
 ```
 
 ### Explanation of the Playbook
