@@ -164,6 +164,21 @@ This playbook will use no configuration modules. It is purely for reading and ch
     *   `ipaddr('address')` is a filter that extracts just the IP address from a prefix (e.g., `10.222.201.3/32` -> `10.222.201.3`).
     *   `default('')` is another safety mechanism. If the `stdout` doesn't exist, it provides an empty string instead of causing an error.
 
+### Note:  the Arista device actually has two neighbors. 
+We are only checking if the word "FULL" shows up in standard out.
+ a more accurate way to check would be, but we have not covered all of these topics.
+ ```yaml
+---
+- name: 1. VALIDATE OSPF NEIGHBORS (Arista EOS)
+  when: "'arista' in group_names"
+  vars: { ospf_not_full: "{{ r_arista_ospf_neighbors.stdout | reject('search','FULL') | list }}" }
+  ansible.builtin.assert:
+    that: ["{{ ospf_not_full | length == 0 }}"]
+    fail_msg: "Neighbors NOT FULL on {{ inventory_hostname }}: {{ ospf_not_full }}"
+    success_msg: "All neighbors FULL on {{ inventory_hostname }}."
+
+```
+
 ---
 
 ## Part 2: Running the Validation Playbook ▶️
